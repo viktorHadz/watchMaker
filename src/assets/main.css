@@ -1,35 +1,72 @@
-@import './base.css';
+@import 'tailwindcss';
+@layer base {
+  :root {
+    /* font-family: 'Manrope Variable', sans-serif; */
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    /* Firefox */
+    input[type='number'] {
+      -moz-appearance: textfield;
+    }
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant light (&:where([data-theme=light], [data-theme=light] *));
+[data-theme='light'] {
+  --color-primary: oklch(100% 0 0);
+  /* --color-sec: oklch(0.69 0.1179 150.16); */
+  /* --color-acc: oklch(0.84 0.146 85.9); */
+  --color-sec: oklch(0.86 0.0196 204.83);
+  /* --color-acc: oklch(0.36 0.0389 248.94); */
+  --color-acc: oklch(0.69 0.1179 150.16);
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+  --color-body-el: oklch(100% 0 0);
+  --color-brdr: oklch(0.708 0 0);
+  --color-font: oklch(0.27 0.0055 286.03);
+  --color-font2: oklch(100% 0 0);
+
+  --color-danger: oklch(0.737 0.237 25.331);
+  --color-warning: oklch(75.22% 0.1235 62.47);
+  --color-success: oklch(68.1% 0.1708 151.16);
+}
+[data-theme='dark'] {
+  --color-primary: oklch(23.93% 0 0);
+  --color-sec: oklch(0.205 0 0);
+  --color-acc: oklch(70.25% 0.132 160.37);
+
+  --color-body-el: oklch(0.27 0.0055 286.03);
+  --color-brdr: oklch(0.439 0 0);
+  --color-font: oklch(0.708 0 0);
+  --color-font2: oklch(0.808 0 0);
+
+  --color-danger: oklch(0.637 0.237 25.331);
+  --color-warning: oklch(75.22% 0.1235 62.47);
+  --color-success: oklch(68.1% 0.1708 151.16);
+}
+
+@theme {
+  --font-sans: 'Manrope Variable', sans-serif;
+  --text-mini: 0.725rem;
+  --text-tiny: 0.625rem;
+
+  --color-primary: var(--color-primary);
+  --color-sec: var(--color-sec);
+  --color-sec-mute: var(--color-sec-mute);
+  --color-acc: var(--color-acc);
+  --color-ter: var(--color-ter);
+
+  --color-nav: var(--color-navigation);
+  --color-brdr: var(--color-brdr);
+  --color-fg: var(--color-font);
+  --color-fg2: var(--color-font2);
+
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warn: var(--color-warning);
 }
