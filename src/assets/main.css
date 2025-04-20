@@ -20,9 +20,7 @@
 @custom-variant light (&:where([data-theme=light], [data-theme=light] *));
 [data-theme='light'] {
   --color-primary: oklch(100% 0 0);
-  /* --color-sec: oklch(0.69 0.1179 150.16); */
-  /* --color-acc: oklch(0.84 0.146 85.9); */
-  --color-sec: oklch(0.86 0.0196 204.83);
+  --color-sec: oklch(0.31 0.1637 263.98);
   /* --color-acc: oklch(0.36 0.0389 248.94); */
   --color-acc: oklch(0.69 0.1179 150.16);
 
