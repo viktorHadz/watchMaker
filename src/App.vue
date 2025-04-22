@@ -8,11 +8,15 @@ import NavigationBar from './components/NavigationBar.vue'
     class="bg-primary text-fg flex min-h-[100vh] w-[100%] transition duration-500 will-change-transform"
   >
     <NavigationBar></NavigationBar>
-    <RouterView />
+    <div class="main-content">
+      <RouterView />
+    </div>
   </div>
 </template>
 
 <style scoped>
-
-
+.main-content {
+  flex-grow: 1;
+  min-width: 0;
+}
 </style>

@@ -22,7 +22,7 @@
   --color-primary: oklch(100% 0 0);
   --color-sec: oklch(0.31 0.1637 263.98);
   /* --color-acc: oklch(0.36 0.0389 248.94); */
-  --color-acc: oklch(0.69 0.1179 150.16);
+  --color-acc: oklch(0.74 0.1373 42.52);
 
   --color-body-el: oklch(100% 0 0);
   --color-brdr: oklch(0.708 0 0);
@@ -49,7 +49,8 @@
 }
 
 @theme {
-  --font-sans: 'Manrope Variable', sans-serif;
+  /* --font-sans: 'Manrope Variable', sans-serif; */
+  --default-font-family: 'Cormorant Variable', sans;
   --text-mini: 0.725rem;
   --text-tiny: 0.625rem;
 
@@ -67,4 +68,11 @@
   --color-success: var(--color-success);
   --color-danger: var(--color-danger);
   --color-warn: var(--color-warning);
+}
+.router-link-active {
+  @apply text-acc;
+  @apply hover:brightness-150;
+}
+.router-link-exact-active {
+  @apply text-acc;
 }
