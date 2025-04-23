@@ -36,7 +36,7 @@
 [data-theme='dark'] {
   --color-primary: oklch(23.93% 0 0);
   --color-sec: oklch(0.205 0 0);
-  --color-acc: oklch(70.25% 0.132 160.37);
+  --color-acc: oklch(0.74 0.1373 42.52);
 
   --color-body-el: oklch(0.27 0.0055 286.03);
   --color-brdr: oklch(0.439 0 0);
@@ -71,8 +71,18 @@
 }
 .router-link-active {
   @apply text-acc;
-  @apply hover:brightness-150;
 }
 .router-link-exact-active {
   @apply text-acc;
+}
+
+
+@keyframes rotate-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rotate-ccw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
 }
