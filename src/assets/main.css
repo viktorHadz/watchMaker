@@ -21,7 +21,7 @@
 [data-theme='light'] {
   --color-primary: oklch(100% 0 0);
   --color-sec: oklch(0.31 0.1637 263.98);
-  /* --color-acc: oklch(0.36 0.0389 248.94); */
+  --color-sec-mute: oklch(0.33 0.1637 263.98);
   --color-acc: oklch(0.74 0.1373 42.52);
 
   --color-body-el: oklch(100% 0 0);
@@ -36,6 +36,7 @@
 [data-theme='dark'] {
   --color-primary: oklch(23.93% 0 0);
   --color-sec: oklch(0.205 0 0);
+  --color-sec-mute: oklch(0.22 0 0);
   --color-acc: oklch(0.74 0.1373 42.52);
 
   --color-body-el: oklch(0.27 0.0055 286.03);
@@ -76,13 +77,47 @@
   @apply text-acc;
 }
 
-
 @keyframes rotate-cw {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes rotate-ccw {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(-360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+#bottom-wheel {
+  animation: rotate-cw 2s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+#middle-wheel {
+  animation: rotate-ccw 6s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+#top-wheel {
+  animation: rotate-cw 2s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@layer components {
+  .input {
+    @apply block w-full rounded-md bg-primary dark:bg-sec-mute px-3.5 py-2 text-base outline-1 -outline-offset-1 outline-brdr placeholder:text-fg/70 text-fg focus:outline-2 focus:-outline-offset-2 focus:outline-acc;
+  }
+}
+@layer components {
+  .btn {
+    @apply rounded-md bg-acc px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-acc/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc;
+  }
 }
