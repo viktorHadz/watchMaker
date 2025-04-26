@@ -7,7 +7,7 @@
             class="absolute inset-y-0 left-0 -z-10 w-full overflow-hidden bg-gray-100 dark:bg-sec ring-1 ring-brdr lg:w-1/2"
           >
             <svg
-              class="absolute inset-0 size-full stroke-gray-200 dark:stroke-neutral-900 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+              class="absolute inset-0 size-full stroke-gray-200 dark:stroke-acc/40 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
               aria-hidden="true"
             >
               <defs>
@@ -23,7 +23,7 @@
                 </pattern>
               </defs>
               <rect width="100%" height="100%" stroke-width="0" fill="acc" />
-              <svg x="100%" y="-1" class="overflow-visible fill-acc/40">
+              <svg x="100%" y="-1" class="overflow-visible fill-acc/80">
                 <path d="M-470.5 0h201v201h-201Z" stroke-width="0" />
               </svg>
               <rect
@@ -38,31 +38,34 @@
             <h2 class="text-4xl font-semibold tracking-tight text-pretty text-fg sm:text-5xl">
               Get in touch
             </h2>
-            <h3 class="mt-6 text-xl/8 text-fg/80">
+            <h3 class="mt-6 text-xl/8 text-fg/90">
               If it's about watches, you're in the right place
             </h3>
             <ul class="list-disc">
-              <li class="mt-4 text-base/7 text-fg/70">
+              <li class="mt-4 text-base/7 text-fg">
                 I'm happy to take on repair work of all kinds — vintage, modern, quartz,
                 automatic... if it's built to be fixed, I’m happy to take a look. Just drop me a
                 message and we’ll figure out what it needs.
               </li>
-              <li class="mt-4 text-base/7 text-fg/70">
+              <li class="mt-4 text-base/7 text-fg">
                 If you're a watchmaker yourself and stuck on something, feel free to reach out. I’m
                 always up for problem-solving, sharing ideas, or just trading notes on the bench.
               </li>
-              <li class="mt-4 text-base/7 text-fg/70">
+              <li class="mt-4 text-base/7 text-fg">
                 And if you just love watches and want to chat — that’s welcome too. Always good to
                 hear from fellow enthusiasts.
               </li>
             </ul>
           </section>
 
-          <dl class="mt-10 space-y-4 text-base/7 text-fg/80">
-            <div class="flex gap-x-4 cursor-pointer" @click="showModal = true">
+          <dl class="mt-10 text-xl/7 text-fg w-fit">
+            <div
+              class="flex gap-x-1 items-center cursor-pointer hover:text-acc"
+              @click="showModal = true"
+            >
               <dt class="flex-none">
                 <span class="sr-only">Price list</span>
-                <CurrencyPoundIcon class="h-7 w-6 text-fg/70" aria-hidden="true" />
+                <CurrencyPoundIcon class="size-5.5 stroke-1" aria-hidden="true" />
               </dt>
               <dd>Price list</dd>
             </div>
@@ -138,27 +141,24 @@
       </form>
     </div>
   </div>
-  <template>
-    <button @click="showModal = true">Open Modal</button>
 
-    <ModalBase v-model="showModal">
-      <template #header>
-        <h2 class="text-xl font-bold">Watch Talk</h2>
-      </template>
+  <ModalBase v-model="showModal">
+    <template #header>
+      <h2 class="text-2xl text-fg font-semibold">Watch Repair Price Guide</h2>
+    </template>
 
-      <p>Send repairs, ask questions, or just chat horology.</p>
+    <PriceList></PriceList>
 
-      <template #footer>
-        <button class="btn" @click="showModal = false">Close</button>
-      </template>
-    </ModalBase>
-  </template>
+    <template #footer>
+      <button class="btn" @click="showModal = false">Close</button>
+    </template>
+  </ModalBase>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { CurrencyPoundIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/vue/24/outline'
+import { CurrencyPoundIcon } from '@heroicons/vue/24/outline'
 import ModalBase from '@/components/ModalBase.vue'
-
+import PriceList from '@/components/PriceList.vue'
 const showModal = ref(false)
 </script>

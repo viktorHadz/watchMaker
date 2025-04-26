@@ -10,21 +10,21 @@
         ref="modalRoot"
       >
         <div
-          class="bg-primary p-6 rounded-xl shadow-xl w-full max-w-lg"
+          class="bg-primary rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <header v-if="$slots.header" class="mb-4">
-            <slot name="header" />
-          </header>
-
-          <main>
-            <slot />
-          </main>
-
-          <footer v-if="$slots.footer" class="mt-6">
-            <slot name="footer" />
-          </footer>
+          <div class="p-4">
+            <header v-if="$slots.header" class="mb-4 sticky top-0 bg-primary z-10 py-2">
+              <slot name="header" />
+            </header>
+            <main class="space-y-4">
+              <slot />
+            </main>
+            <footer v-if="$slots.footer" class="mt-6 sticky bottom-0 bg-primary py-2">
+              <slot name="footer" />
+            </footer>
+          </div>
         </div>
       </div>
     </transition>
