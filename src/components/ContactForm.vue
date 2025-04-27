@@ -1,9 +1,13 @@
 <template>
-  <form action="#" method="POST" class="px-6 pt-20 pb-24 sm:pb-32 lg:px-8 lg:py-12">
+  <form
+    action="#"
+    method="POST"
+    class="px-6 pt-20 pb-24 sm:pb-32 lg:px-8 lg:py-12 bg-sec rounded-x rounded-t lg:rounded-b lg:rounded-t-none"
+  >
     <div class="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
       <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <div>
-          <label for="first-name" class="block text-sm/6 font-semibold text-fg2 dark:text-fg"
+          <label for="first-name" class="block text-base/6 font-semibold text-fg2 dark:text-fg"
             >First name</label
           >
           <div class="mt-2.5">
@@ -17,7 +21,7 @@
           </div>
         </div>
         <div>
-          <label for="last-name" class="block text-sm/6 font-semibold text-fg2 dark:text-fg"
+          <label for="last-name" class="block text-base/6 font-semibold text-fg2 dark:text-fg"
             >Last name</label
           >
           <div class="mt-2.5">
@@ -31,7 +35,7 @@
           </div>
         </div>
         <div class="sm:col-span-2">
-          <label for="email" class="block text-sm/6 font-semibold text-fg2 dark:text-fg"
+          <label for="email" class="block text-base/6 font-semibold text-fg2 dark:text-fg"
             >Email</label
           >
           <div class="mt-2.5">
@@ -39,7 +43,7 @@
           </div>
         </div>
         <div class="sm:col-span-2">
-          <label for="phone-number" class="block text-sm/6 font-semibold text-fg2 dark:text-fg"
+          <label for="phone-number" class="block text-base/6 font-semibold text-fg2 dark:text-fg"
             >Phone number</label
           >
           <div class="mt-2.5">
@@ -53,7 +57,7 @@
           </div>
         </div>
         <div class="sm:col-span-2">
-          <label for="message" class="block text-sm/6 font-semibold text-fg2 dark:text-fg"
+          <label for="message" class="block text-base/6 font-semibold text-fg2 dark:text-fg"
             >Message</label
           >
           <div class="mt-2.5">

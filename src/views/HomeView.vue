@@ -15,72 +15,81 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
 </script>
 
 <template>
-  <main>
-    <div class="grid grid-cols-3">
-      <!-- 3 Brand -->
-      <div class="grid grid-rows-3 gap-y-4 place-items-center text-fg/80">
+  <main class="flex flex-col items-center w-full">
+    <section class="grid grid-cols-1 lg:grid-cols-3 items-center gap-8 py-8">
+      <!-- Left brands (hidden on mobile) -->
+      <div class="hidden lg:grid grid-rows-3 gap-6 place-items-center text-fg/80">
         <OmegaLogo class="size-14 transition-transform duration-200 hover:scale-110" />
         <CasioLogo class="size-14 transition-transform duration-200 hover:scale-110" />
         <LonginesLogo class="size-16 transition-transform duration-200 hover:scale-110" />
       </div>
-      <!-- Main Logo -->
-      <div class="flex items-center flex-col gap-6 py-8 mx-auto max-w-xl">
-        <!-- Title -->
-        <h1 class="text-4xl tracking-widest font-semibold cursor-default">Veselin Hadzhiyski</h1>
-        <!-- Logo -->
-        <TheLogo class="relative"></TheLogo>
-        <!-- Title Text -->
-        <h1 class="text-3xl tracking-widest font-semibold cursor-default">Watchmaker & Repairs</h1>
-        <!-- Quote block -->
+
+      <!-- Center title + logo -->
+      <div class="flex flex-col items-center gap-6">
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-wide text-nowrap text-center">
+          Veselin Hadzhiyski
+        </h1>
+        <TheLogo class="w-48 sm:w-64" />
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-wider text-center">
+          Watchmaker & Repairs
+        </h2>
         <blockquote
-          class="relative text-center max-w-lg text-fg italic tracking-wide leading-relaxed text-lg px-4"
+          class="relative text-center max-w-md text-fg italic tracking-wide leading-relaxed text-lg px-4"
         >
-          <span class="absolute left-0 top-0 text-5xl text-acc opacity-40 pr-1">“ </span>
-          <p class="z-10 relative">Time is the wisest counselor of all.</p>
-          <footer class="not-italic text-fg/70 text-sm mt-2">— Pericles</footer>
+          <span class="absolute left-0 top-0 text-5xl text-acc opacity-70">“ </span>
+          <p class="relative z-10 text-pretty">Time is the wisest counselor of all.</p>
+          <footer class="mt-2 text-base text-fg/70">— Pericles</footer>
         </blockquote>
       </div>
-      <div class="grid grid-rows-3 gap-y-4 place-items-center text-fg/80">
-        <RolexLogo class="size-14 transition-transform duration-200 hover:scale-110"></RolexLogo>
-        <SeikoLogo class="size-14 transition-transform duration-200 hover:scale-110"></SeikoLogo>
-        <VostokLogo class="size-14 transition-transform duration-200 hover:scale-110"></VostokLogo>
-      </div>
-    </div>
-    <hr class="text-fg/40 mask-x-from-40%" />
-    <div class="w-full grid grid-cols-2 gap-12 p-8">
-      <!-- LEFT -->
-      <div
-        class="relative min-w-[260px] min-h-[180px] border border-fg/20 hover:border-acc overflow-hidden hover:brightness-125 shadow-md rounded"
-      >
-        <!-- Background layer -->
-        <div
-          class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/my-work.webp)] bg-cover bg-center bg-no-repeat brightness-50 transition-all"
-        ></div>
-        <!-- Text layer -->
-        <div
-          class="relative z-10 w-full h-full flex items-center justify-center text-3xl text-white cursor-pointer hover:text-acc font-bold"
-          @click="goToRoute('my-work')"
-        >
-          Explore my work
-        </div>
-      </div>
-      <!-- RIGHT -->
-      <div
-        class="relative min-w-[260px] min-h-[180px] border border-fg/20 hover:border-acc overflow-hidden hover:brightness-125 shadow-md rounded"
-      >
-        <!-- Background layer -->
-        <div
-          class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/get-in-touch.webp)] bg-cover bg-center bg-no-repeat brightness-50 transition-all"
-        ></div>
 
-        <!-- Text layer -->
+      <!-- Right brands (hidden on mobile) -->
+      <div class="hidden lg:grid grid-rows-3 gap-6 place-items-center text-fg/80">
+        <RolexLogo class="size-14 transition-transform duration-200 hover:scale-110" />
+        <SeikoLogo class="size-14 transition-transform duration-200 hover:scale-110" />
+        <VostokLogo class="size-14 transition-transform duration-200 hover:scale-110" />
+      </div>
+    </section>
+
+    <hr class="text-fg/40 mask-x-from-40% w-full" />
+
+    <section class="text-center p-4 sm:p-8 max-w-4xl">
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-widest">Big boy title</h1>
+      <p class="mt-6 text-base sm:text-lg leading-relaxed px-2 sm:px-6">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. ...
+      </p>
+    </section>
+
+    <section
+      class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:p-6 lg:px-24 pb-32 sm:pb-8 2xl:max-w-1/2"
+    >
+      <!-- Get in Touch -->
+      <div
+        class="relative min-h-[200px] border border-fg/20 hover:border-acc overflow-hidden hover:brightness-125 shadow-md rounded cursor-pointer"
+        @click="goToRoute('repairs')"
+      >
         <div
-          class="relative z-10 w-full h-full flex items-center justify-center text-3xl text-white cursor-pointer hover:text-acc font-bold"
-          @click="goToRoute('repairs')"
+          class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/get-in-touch.webp)] bg-cover bg-center brightness-50 transition-all"
+        ></div>
+        <div
+          class="relative z-10 flex items-center justify-center h-full text-2xl sm:text-3xl font-bold text-white hover:text-acc"
         >
           Get in touch
         </div>
       </div>
-    </div>
+      <!-- My Work -->
+      <div
+        class="relative min-h-[200px] border border-fg/20 hover:border-acc overflow-hidden hover:brightness-125 shadow-md rounded cursor-pointer"
+        @click="goToRoute('my-work')"
+      >
+        <div
+          class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/my-work.webp)] bg-cover bg-center brightness-50 transition-all"
+        ></div>
+        <div
+          class="relative z-10 flex items-center justify-center h-full text-2xl sm:text-3xl font-bold text-white hover:text-acc"
+        >
+          Explore my work
+        </div>
+      </div>
+    </section>
   </main>
 </template>

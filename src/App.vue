@@ -5,18 +5,17 @@ import NavigationBar from './components/NavigationBar.vue'
 
 <template>
   <div
-    class="bg-primary text-fg flex min-h-[100vh] w-[100%] transition duration-500 will-change-transform"
+    class="bg-primary text-fg flex flex-col min-h-screen h-full w-full overflow-x-hidden transition-colors duration-500"
   >
-    <NavigationBar></NavigationBar>
-    <div class="main-content">
-      <RouterView />
+    <div class="flex flex-1 h-full">
+      <NavigationBar />
+      <main class="flex-1 flex flex-col">
+        <div class="px-4 sm:px-8 md:px-12 xl:px-24 flex-1 flex flex-col">
+          <RouterView />
+        </div>
+      </main>
     </div>
   </div>
 </template>
 
-<style scoped>
-.main-content {
-  flex-grow: 1;
-  min-width: 0;
-}
-</style>
+<style scoped></style>

@@ -1,53 +1,54 @@
+<!-- PriceList.vue -->
 <template>
   <div class="text-left text-lg text-fg space-y-4 cursor-default">
     <ul class="divide-y divide-fg/10">
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Battery replacement (standard quartz)</span>
-        <span>£15</span>
+        <span class="pl-4 whitespace-nowrap">£15</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Full service – quartz movement</span>
-        <span>£60–£90</span>
+        <span class="pl-4 whitespace-nowrap">£60–£90</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Full service – mechanical (manual/auto)</span>
-        <span>£120–£220</span>
+        <span class="pl-4 whitespace-nowrap">£120–£220</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Movement regulation (timing adjustment)</span>
-        <span>£35</span>
+        <span class="pl-4 whitespace-nowrap">£35</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Crystal replacement (acrylic/mineral/sapphire)</span>
-        <span>from £40</span>
+        <span class="pl-4 whitespace-nowrap">from £40</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Water resistance test (dry & wet method)</span>
-        <span>£25</span>
+        <span class="pl-4 whitespace-nowrap">£25</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Crown or stem repair/replacement</span>
-        <span>from £45</span>
+        <span class="pl-4 whitespace-nowrap">from £45</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Pushers/button repairs</span>
-        <span>from £30</span>
+        <span class="pl-4 whitespace-nowrap">from £30</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Bracelet resizing</span>
-        <span>£10</span>
+        <span class="pl-4 whitespace-nowrap">£10</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Strap fitting or spring bar replacement</span>
-        <span>£8</span>
+        <span class="pl-4 whitespace-nowrap">£8</span>
       </li>
-      <li class="flex justify-between py-2">
+      <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Vintage watch assessment & quote</span>
-        <span>Free</span>
+        <span class="pl-4 whitespace-nowrap">Free</span>
       </li>
     </ul>
 
-    <p class="text-base text-fg/60 mt-4">
+    <p class="text-base lg:text-lg text-fg/80 mt-4">
       Note: Prices are estimates and may vary depending on brand, age, and condition. All work is
       quoted before proceeding.
     </p>
