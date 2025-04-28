@@ -11,7 +11,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fontsource-variable/cinzel": "^5.2.5",
     "@fontsource-variable/cormorant": "^5.2.5",
+    "@fontsource-variable/eb-garamond": "^5.2.5",
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.1.4",
     "@vueuse/core": "^13.1.0",
@@ -19,7 +21,8 @@
     "pinia": "^3.0.1",
     "tailwindcss": "^4.1.4",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

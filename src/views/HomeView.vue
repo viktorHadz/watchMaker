@@ -25,20 +25,23 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
       </div>
 
       <!-- Center title + logo -->
-      <div class="flex flex-col items-center gap-6">
-        <h1 class="text-3xl sm:text-4xl font-semibold tracking-wide text-nowrap text-center">
+      <div class="flex flex-col items-center gap-6 text-fg">
+        <h1 class="text-2xl sm:text-3xl font-normal tracking-wide text-nowrap text-center font-sec">
           Veselin Hadzhiyski
         </h1>
         <TheLogo class="w-48 sm:w-64" />
-        <h2 class="text-2xl sm:text-3xl font-semibold tracking-wider text-center">
+        <h2 class="text-2xl font-normal tracking-wide text-center text-nowrap font-sec">
           Watchmaker & Repairs
         </h2>
         <blockquote
           class="relative text-center max-w-md text-fg italic tracking-wide leading-relaxed text-lg px-4"
         >
           <span class="absolute left-0 top-0 text-5xl text-acc opacity-70">“ </span>
-          <p class="relative z-10 text-pretty">Time is the wisest counselor of all.</p>
-          <footer class="mt-2 text-base text-fg/70">— Pericles</footer>
+          <p class="relative z-10 text-fg">Time is the wisest counselor of all.</p>
+
+          <footer class="mt-2 text-base/tight text-fg/80 flex items-center justify-center">
+            — Pericles
+          </footer>
         </blockquote>
       </div>
 
@@ -53,7 +56,9 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
     <hr class="text-fg/40 mask-x-from-40% w-full" />
 
     <section class="text-center p-4 sm:p-8 max-w-4xl">
-      <h1 class="text-2xl sm:text-3xl font-semibold tracking-widest">Big boy title</h1>
+      <h1 class="text-2xl font-normal tracking-wide text-center text-nowrap font-sec">
+        Big boy title
+      </h1>
       <p class="mt-6 text-base sm:text-lg leading-relaxed px-2 sm:px-6">
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. ...
       </p>
@@ -71,7 +76,7 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
           class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/get-in-touch.webp)] bg-cover bg-center brightness-50 transition-all"
         ></div>
         <div
-          class="relative z-10 flex items-center justify-center h-full text-2xl sm:text-3xl font-bold text-white hover:text-acc"
+          class="relative z-10 flex items-center justify-center h-full text-2xl font-normal hover:font-semibold text-white hover:text-acc font-sec transform-stroke duration-75"
         >
           Get in touch
         </div>
@@ -85,7 +90,7 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
           class="absolute inset-0 bg-blend-soft-light bg-acc/20 bg-[url(../assets/pictures/my-work.webp)] bg-cover bg-center brightness-50 transition-all"
         ></div>
         <div
-          class="relative z-10 flex items-center justify-center h-full text-2xl sm:text-3xl font-bold text-white hover:text-acc"
+          class="relative z-10 flex items-center justify-center h-full text-2xl font-normal hover:font-semibold text-white hover:text-acc font-sec transform-stroke duration-75"
         >
           Explore my work
         </div>

@@ -1,4 +1,5 @@
-import '@fontsource-variable/cormorant'
+import '@fontsource-variable/cinzel'
+import '@fontsource-variable/eb-garamond'
 import './assets/main.css'
 
 import { createApp } from 'vue'

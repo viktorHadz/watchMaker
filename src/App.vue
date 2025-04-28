@@ -1,6 +1,12 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import NavigationBar from './components/NavigationBar.vue'
+/*
+TODO:
+  1. Reconsider the brands
+  2. Orient writing towards more vintage watches 
+  3. Think about UI reflecting the above ideas appropriately 
+*/
 </script>
 
 <template>
@@ -10,7 +16,7 @@ import NavigationBar from './components/NavigationBar.vue'
     <div class="flex flex-1 h-full">
       <NavigationBar />
       <main class="flex-1 flex flex-col">
-        <div class="px-4 sm:px-8 md:px-12 xl:px-24 flex-1 flex flex-col">
+        <div class="xl:px-24 flex-1 flex flex-col min-h-full">
           <RouterView />
         </div>
       </main>

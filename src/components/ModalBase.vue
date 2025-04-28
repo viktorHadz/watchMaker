@@ -4,7 +4,7 @@
     <transition name="modal">
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center sm:items-center bg-black/50"
+        class="fixed z-[99] flex items-center justify-center sm:items-center bg-black/50 top-0 left-0 w-full h-full transition-all duration-initial"
         @click.self="close"
         @keydown.esc="close"
         tabindex="0"

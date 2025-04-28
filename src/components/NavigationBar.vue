@@ -22,7 +22,7 @@ watch(expanded, () => {
 <template>
   <!-- Desktop sidebar -->
   <header
-    class="hidden sm:flex flex-col justify-between bg-sec dark:text-fg text-fg2 text-lg font-semibold transition-[width] duration-500 ease-in-out overflow-hidden min-h-[100%] flex-shrink-0"
+    class="hidden sm:flex flex-col justify-between bg-sec dark:text-fg text-fg2 text-lg font-medium transition-[width] duration-500 ease-in-out overflow-hidden min-h-[100%] flex-shrink-0 font-sec z-50"
     :style="{ width: expanded ? '150px' : '60px' }"
   >
     <div class="sticky top-0">
@@ -46,7 +46,7 @@ watch(expanded, () => {
       </Transition>
     </div>
 
-    <div class="sticky bottom-0 flex flex-col items-center justify-center gap-6">
+    <div class="sticky bottom-4 flex flex-col items-center justify-center gap-12">
       <button
         @click="expanded = !expanded"
         class="relative flex items-center justify-center hover:text-acc cursor-pointer"
@@ -55,7 +55,7 @@ watch(expanded, () => {
           <Transition :name="dynamicName" mode="out-in">
             <component
               :is="expanded ? ChevronDoubleLeftIcon : ChevronDoubleRightIcon"
-              class="size-7"
+              class="size-8"
             />
           </Transition>
         </div>

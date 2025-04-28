@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @layer base {
   :root {
-    /* font-family: 'Manrope Variable', sans-serif; */
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
@@ -51,7 +50,9 @@
 
 @theme {
   /* --font-sans: 'Manrope Variable', sans-serif; */
-  --default-font-family: 'Cormorant Variable', sans;
+  --font-*: initial;
+  --default-font-family: 'EB Garamond Variable', serif;
+  --font-sec: 'Cinzel Variable', serif;
   --text-mini: 0.725rem;
   --text-tiny: 0.625rem;
 
@@ -113,7 +114,7 @@
 
 @layer components {
   .input {
-    @apply block w-full rounded-md bg-primary dark:bg-sec-mute px-3.5 py-2 text-base outline-1 -outline-offset-1 outline-brdr placeholder:text-fg/70 text-fg focus:outline-2 focus:-outline-offset-2 focus:outline-acc;
+    @apply block w-full rounded-md bg-primary dark:bg-sec-mute px-2 py-1 text-sm outline-1 -outline-offset-1 outline-brdr placeholder:text-fg/70 text-fg focus:outline-2 focus:-outline-offset-2 focus:outline-acc placeholder:text-sm hover:placeholder:brightness-110;
   }
 }
 @layer components {
