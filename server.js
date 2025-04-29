@@ -11,14 +11,16 @@ const app = express()
 
 
 
-
+app.use(express.json())
 app.use('/', express.static('dist'))
 app.get('/', (req, res) => {
   res.send('mamati')
 })
 app.post('/api/form/data', (req, res) => {
+  console.log('Server got a hit');
   const formData = req.body
-  console.log(formData);
+  console.log('Form data', formData);
+
   res.send(formData)
 })
 const PORT = 5000

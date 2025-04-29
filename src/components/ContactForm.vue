@@ -67,9 +67,10 @@ const onSubmit = (event) => {
   } else {
     console.log(result)
     console.log(result.data)
-    const formData = result.data
 
+    const formData = result.data
     sendAndRecieveData(formData)
+
     clearForm()
   }
 }
