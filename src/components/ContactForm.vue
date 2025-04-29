@@ -67,6 +67,9 @@ const onSubmit = (event) => {
   } else {
     console.log(result)
     console.log(result.data)
+    const formData = result.data
+
+    sendAndRecieveData(formData)
     clearForm()
   }
 }
@@ -76,6 +79,21 @@ const clearForm = () => {
   form.email = ''
   form.message = ''
   form.phone = ''
+}
+const sendAndRecieveData = async (formData) => {
+  try {
+    const res = await fetch('/api/form/data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+    const result = await res.json()
+    console.log('This is the result received from the server', result)
+  } catch (error) {
+    console.log('Submission error =>', error)
+  }
 }
 // validate form on submission. If it doesnt conform return errors visually and notify
 // after validation send to backend

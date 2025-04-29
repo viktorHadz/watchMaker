@@ -9,7 +9,7 @@ router.use((req, res, next) => {
 })
 // Next router should then allow the frontend to sen informationg and call next 
 // Then the next router should receive and validate the data 
-router.get('/api/form/:data', (req, res) => {
-  // const formData = req.params
-  res.send(`Sending data: ${req.params.data}`)
-})
+// router.get('/api/form/:data', (req, res) => {
+//   // const formData = req.params
+//   res.send(`Sending data: ${req.params.data}`)
+// })
