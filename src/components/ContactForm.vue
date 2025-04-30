@@ -69,7 +69,7 @@ const onSubmit = (event) => {
     console.log(result.data)
 
     const formData = result.data
-    sendAndRecieveData(formData)
+    postData(formData)
 
     clearForm()
   }
@@ -81,7 +81,7 @@ const clearForm = () => {
   form.message = ''
   form.phone = ''
 }
-const sendAndRecieveData = async (formData) => {
+const postData = async (formData) => {
   try {
     const res = await fetch('/api/form/data', {
       method: 'POST',

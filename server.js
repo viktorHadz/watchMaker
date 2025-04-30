@@ -7,9 +7,9 @@
  Header restriction 
  */
 import express from 'express'
+import * as z from 'zod'
+
 const app = express()
-
-
 
 app.use(express.json())
 app.use('/', express.static('dist'))
