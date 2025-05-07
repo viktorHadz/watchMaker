@@ -1,6 +1,10 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import NavigationBar from './components/NavigationBar.vue'
+import ToastElement from './components/ToastElement.vue'
+import { useToastStore } from '@/stores/toast'
+const toast = useToastStore()
+
 /*
 TODO:
   1. Reconsider the brands
@@ -19,6 +23,7 @@ TODO:
         <div class="xl:px-24 flex-1 flex flex-col min-h-full">
           <RouterView />
         </div>
+        <ToastElement v-if="toast.visible" :message="toast.message" :type="toast.type" />
       </main>
     </div>
   </div>

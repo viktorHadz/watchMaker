@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { watch, ref } from 'vue'
 import DarkMode from '@/components/DarkMode.vue'
+import { useStorage } from '@vueuse/core'
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
@@ -10,7 +11,7 @@ import {
   PhotoIcon,
 } from '@heroicons/vue/24/outline'
 
-const expanded = ref(true)
+const expanded = useStorage('navigation-expanded', true)
 const dynamicName = ref('')
 
 watch(expanded, () => {

@@ -1,6 +1,10 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import * as z from 'zod'
+import { useToastStore } from '@/stores/toast'
+
+const toast = useToastStore()
+
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -51,9 +55,9 @@ const displayErrors = reactive({
   message: '',
   phone: '',
 })
-const onSubmit = (event) => {
+
+const onSubmit = () => {
   const result = formSchema.safeParse(form)
-  console.log(`Event: ${event}`)
   if (!result.success) {
     console.log('Issue logged by result error: ', result.error.issues)
     formattedError.value = result.error.format()
@@ -62,6 +66,7 @@ const onSubmit = (event) => {
     displayErrors.email = formattedError?.value.email?._errors[0]
     displayErrors.message = formattedError?.value.message?._errors[0]
     displayErrors.phone = formattedError?.value.phone?._errors[0]
+    toast.showToast('Please fix the errors.', 'error')
 
     return
   } else {
@@ -72,6 +77,7 @@ const onSubmit = (event) => {
     postData(formData)
 
     clearForm()
+    toast.showToast('Your message was sent successfully!', 'success')
   }
 }
 const clearForm = () => {
@@ -94,6 +100,7 @@ const postData = async (formData) => {
     console.log('This is the result received from the server', result)
   } catch (error) {
     console.log('Submission error =>', error)
+    toast.showToast('Submission failed. Try again later.', 'error')
   }
 }
 // validate form on submission. If it doesnt conform return errors visually and notify
