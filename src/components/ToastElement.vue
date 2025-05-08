@@ -1,4 +1,6 @@
 <script setup>
+import { useToastStore } from '@/stores/toast'
+const toast = useToastStore()
 defineProps({
   message: String,
   type: {
@@ -10,7 +12,8 @@ defineProps({
 
 <template>
   <div
-    class="fixed top-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded shadow-md text-white"
+    v-if="toast.visible"
+    class="fixed bottom-5 px-4 right-12 py-2 rounded shadow-md text-white text-2xl font-bold z-[999]"
     :class="{
       'bg-green-600': type === 'success',
       'bg-red-500': type === 'error',
