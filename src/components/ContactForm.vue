@@ -103,6 +103,26 @@ const postData = async (formData) => {
     toast.showToast('Submission failed. Try again later.', 'error')
   }
 }
+
+const selectedFiles = ref([])
+
+const handleFileChange = (event) => {
+  const files = Array.from(event.target.files)
+
+  // Combine old and new, limit to 5, and filter duplicates by name
+  const combined = [...selectedFiles.value, ...files]
+  const unique = Array.from(new Map(combined.map((f) => [f.name, f])).values())
+  selectedFiles.value = unique.slice(0, 5)
+
+  // Optional: Show toast or warning if limit exceeded
+  if (combined.length > 5) {
+    toast.showToast('You can only upload up to 5 images.', 'error')
+  }
+
+  // Reset the input value to allow re-selecting the same file again
+  event.target.value = ''
+}
+
 // validate form on submission. If it doesnt conform return errors visually and notify
 // after validation send to backend
 // on backend validate again
@@ -227,6 +247,30 @@ const postData = async (formData) => {
                 {{ displayErrors.phone }}
               </div>
             </Transition>
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <div class="flex flex-col items-baseline justify-between">
+            <input
+              type="file"
+              name="images"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              class="hidden"
+              id="file-upload"
+              @change="handleFileChange"
+            />
+
+            <label for="file-upload" class="btn"> Choose images </label>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <div
+                v-for="(file, index) in selectedFiles"
+                :key="index"
+                class="text-xs px-3 py-2 rounded-lg border bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg shadow-sm"
+              >
+                {{ file.name }}
+              </div>
+            </div>
           </div>
         </div>
         <div class="sm:col-span-2">
