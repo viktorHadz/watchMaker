@@ -13,7 +13,7 @@ export const useToastStore = defineStore('toast', () => {
 
     setTimeout(() => {
       visible.value = false
-    }, 3000)
+    }, 5000)
   }
 
   return {

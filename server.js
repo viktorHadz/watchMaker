@@ -6,30 +6,17 @@ import * as z from 'zod'
 
 const app = express()
 
-// Use Helmet to set secure HTTP headers
-app.use(helmet())
+// Trust the proxy if behind one (important for correct IP detection)
+app.set('trust proxy', 1) // or true
 
-// Rate limit: max 50 requests per 15 minutes per IP
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1,
-  message: 'Too many requests, please try again later.',
-})
-app.use(limiter)
+// Security headers
+app.use(helmet())
 
 // Body parser
 app.use(express.json())
+
+// Serve static files (not rate limited) - Should I be adding a rate limit here? 
 app.use('/', express.static('dist'))
-
-app.get('/', (req, res) => {
-  res.send('mamati')
-})
-
-// Sanitize helper
-const sanitizeInput = (input) =>
-  typeof input === 'string'
-    ? sanitizeHtml(input, { allowedTags: [], allowedAttributes: {} })
-    : input
 
 // Zod schema
 const formSchema = z.object({
@@ -65,13 +52,31 @@ const formSchema = z.object({
     .or(z.literal('')),
 })
 
-// Handle form submission
-app.post('/api/form/data', (req, res) => {
+
+// Sanitize helper
+const sanitizeInput = (input) =>
+  typeof input === 'string'
+    ? sanitizeHtml(input, { allowedTags: [], allowedAttributes: {} })
+    : input
+
+// Rate limiter ONLY for form endpoint
+const formLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // allow 10 requests per IP for the form submission
+  message: 'Too many form submissions. Please try again later.',
+})
+
+// GET homepage
+app.get('/', (req, res) => {
+  res.send('mamati')
+})
+
+// POST form submission with rate limiting
+app.post('/api/form/data', formLimiter, (req, res) => {
   console.log('Server got a hit')
 
   const rawFormData = req.body
 
-  // Sanitized fields
   const sanitizedFormData = {
     firstName: sanitizeInput(rawFormData.firstName),
     lastName: sanitizeInput(rawFormData.lastName),
@@ -87,11 +92,11 @@ app.post('/api/form/data', (req, res) => {
     return res.status(400).json({ errors: result.error.format() })
   }
 
-  // Everything should be validated and sanitized 
   console.log('Sanitized and validated form data: ', result.data)
   res.status(200).json({ message: 'Form received', data: result.data })
 })
 
+// Server start
 const PORT = 5000
 app.listen(PORT, () => {
   console.log(`-----------------------------`)
