@@ -250,26 +250,29 @@ const handleFileChange = (event) => {
           </div>
         </div>
         <div class="sm:col-span-2">
-          <div class="flex flex-col items-baseline justify-between">
-            <input
-              type="file"
-              name="images"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              class="hidden"
-              id="file-upload"
-              @change="handleFileChange"
-            />
+          <div class="flex justify-between items-center">
+            <p class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg">
+              Images
+            </p>
+            <label for="file-upload" class="btn p-1"> Choose images </label>
+          </div>
+          <input
+            type="file"
+            name="images"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            class="hidden"
+            id="file-upload"
+            @change="handleFileChange"
+          />
 
-            <label for="file-upload" class="btn"> Choose images </label>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <div
-                v-for="(file, index) in selectedFiles"
-                :key="index"
-                class="text-xs px-3 py-2 rounded-lg border bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg shadow-sm"
-              >
-                {{ file.name }}
-              </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <div
+              v-for="(file, index) in selectedFiles"
+              :key="index"
+              class="text-xs px-3 py-2 rounded-lg border bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg shadow-sm max-w-1/2"
+            >
+              {{ file.name }}
             </div>
           </div>
         </div>
