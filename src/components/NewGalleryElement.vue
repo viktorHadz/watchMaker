@@ -31,7 +31,7 @@ const insertNew = () => {
             v-if="newFile.titleImageUrl === ''"
             class="px-4 border-brdr/80 border-2 mb-4 rounded-xs"
           >
-            <placeHolder class="size-38 text-acc"></placeHolder>
+            <placeHolder class="size-32 text-acc"></placeHolder>
           </div>
           <input
             type="file"
@@ -46,22 +46,24 @@ const insertNew = () => {
         </div>
         <div class="w-full">
           <div class="text-start font-semibold font-sec text-lg">Extra Images</div>
-          <div class="px-4 flex justify-around border-brdr/80 border-2 mb-4 rounded-xs">
+          <div
+            class="px-4 py-2 flex justify-around items-center border-brdr/80 border-2 mb-4 rounded-xs"
+          >
             <placeHolder
               v-if="newFile.extraImagesUrl.length === 0"
-              class="size-38 text-acc"
+              class="size-28 text-brdr/80"
             ></placeHolder>
             <placeHolder
               v-if="newFile.extraImagesUrl.length === 0"
-              class="size-38 text-acc"
+              class="size-28 text-brdr/80"
             ></placeHolder>
             <placeHolder
               v-if="newFile.extraImagesUrl.length === 0"
-              class="size-38 text-acc"
+              class="size-28 text-brdr/80"
             ></placeHolder>
             <placeHolder
               v-if="newFile.extraImagesUrl.length === 0"
-              class="size-38 text-acc"
+              class="size-28 text-brdr/80"
             ></placeHolder>
           </div>
           <input
@@ -98,7 +100,7 @@ const insertNew = () => {
         ></textarea>
       </div>
       <div class="flex w-full justify-center mb-2">
-        <button class="btn p-1" @click="insertNew">create new</button>
+        <button class="btn text-base p-1" @click="insertNew">Create New</button>
       </div>
     </div>
     <hr class="mask-x-from-70% mask-x-to-98% my-8 text-brdr" />
