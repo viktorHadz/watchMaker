@@ -15,12 +15,12 @@ TODO:
 
 <template>
   <div
-    class="bg-primary text-fg flex flex-col min-h-screen h-full w-full overflow-x-hidden transition-all duration-500"
+    class="bg-primary text-fg flex h-full min-h-screen w-full flex-col overflow-x-hidden transition-all duration-500"
   >
-    <div class="flex flex-1 h-full">
+    <div class="flex h-full flex-1">
       <NavigationBar />
-      <main class="flex-1 flex flex-col">
-        <div class="xl:px-24 flex-1 flex flex-col min-h-full">
+      <main class="flex flex-1 flex-col">
+        <div class="flex min-h-full flex-1 flex-col xl:px-24">
           <RouterView />
         </div>
         <Transition>

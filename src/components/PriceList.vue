@@ -1,7 +1,7 @@
 <!-- PriceList.vue -->
 <template>
-  <div class="text-left text-base text-fg space-y-4 cursor-default">
-    <ul class="divide-y divide-fg/10">
+  <div class="text-fg cursor-default space-y-4 text-left text-base">
+    <ul class="divide-fg/10 divide-y">
       <li class="grid grid-cols-[1fr_auto] items-center py-2">
         <span>Battery replacement (standard quartz)</span>
         <span class="pl-4 whitespace-nowrap">£15</span>
@@ -48,7 +48,7 @@
       </li>
     </ul>
 
-    <p class="text-sm text-fg/80 mt-4">
+    <p class="text-fg/80 mt-4 text-sm">
       Note: Prices are estimates and may vary depending on brand, age, and condition. All work is
       quoted and agreed upon before proceeding.
     </p>

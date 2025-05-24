@@ -132,18 +132,18 @@ const handleFileChange = (event) => {
   <form
     action="#"
     method="POST"
-    class="px-4 pb-24 pt-8 sm:px-8 md:px-10 lg:pb-8 bg-linear-to-br from-sec/80 to-sec rounded-x rounded-t lg:rounded-b lg:rounded-t-none w-full items-center flex flex-1 dark:border dark:border-brdr dark:border-t-0 justify-center z-10"
+    class="from-sec/80 to-sec rounded-x dark:border-brdr z-10 flex w-full flex-1 items-center justify-center rounded-t bg-linear-to-br px-4 pt-8 pb-24 sm:px-8 md:px-10 lg:rounded-t-none lg:rounded-b lg:pb-8 dark:border dark:border-t-0"
   >
-    <div class="lg:max-w-lg w-full h-full">
+    <div class="h-full w-full lg:max-w-lg">
       <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2">
         <div>
           <div class="flex items-baseline">
             <label
               for="first-name"
-              class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg"
+              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
               >First name</label
             >
-            <span class="text-red-500 dark:text-red-400 text-xl mx-2">*</span>
+            <span class="mx-2 text-xl text-red-500 dark:text-red-400">*</span>
           </div>
           <div class="relative">
             <input
@@ -158,7 +158,7 @@ const handleFileChange = (event) => {
             <Transition>
               <div
                 v-if="displayErrors.firstName"
-                class="absolute flex text-red-400 text-xs sm:text-sm line-clamp-2 leading-3.5 mt-0.5 tracking-normal text-pretty px-0.5"
+                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 tracking-normal text-pretty text-red-400 sm:text-sm"
               >
                 {{ displayErrors.firstName }}
               </div>
@@ -169,10 +169,10 @@ const handleFileChange = (event) => {
           <div class="flex items-baseline">
             <label
               for="last-name"
-              class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg"
+              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
               >Last name</label
             >
-            <span class="text-red-500 text-xl mx-2">*</span>
+            <span class="mx-2 text-xl text-red-500">*</span>
           </div>
           <div class="relative">
             <input
@@ -187,7 +187,7 @@ const handleFileChange = (event) => {
             <Transition>
               <div
                 v-if="displayErrors.lastName"
-                class="absolute flex text-red-400 text-xs sm:text-sm line-clamp-2 leading-3.5 mt-0.5 -tracking-normal text-pretty px-0.5"
+                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
               >
                 {{ displayErrors.lastName }}
               </div>
@@ -198,10 +198,10 @@ const handleFileChange = (event) => {
           <div class="flex items-baseline">
             <label
               for="email"
-              class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg"
+              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
               >Email</label
             >
-            <span class="text-red-500 text-xl mx-2">*</span>
+            <span class="mx-2 text-xl text-red-500">*</span>
           </div>
           <div class="relative">
             <input
@@ -216,7 +216,7 @@ const handleFileChange = (event) => {
             <Transition>
               <div
                 v-if="displayErrors.email"
-                class="absolute flex text-red-400 text-xs sm:text-sm line-clamp-2 leading-3.5 mt-0.5 -tracking-normal text-pretty px-0.5"
+                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
               >
                 {{ displayErrors.email }}
               </div>
@@ -226,7 +226,7 @@ const handleFileChange = (event) => {
         <div class="sm:col-span-2">
           <label
             for="phone-number"
-            class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg"
+            class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
             >Phone number</label
           >
           <div class="relative">
@@ -242,7 +242,7 @@ const handleFileChange = (event) => {
             <Transition>
               <div
                 v-if="displayErrors.phone"
-                class="absolute flex text-red-400 text-xs sm:text-sm line-clamp-2 leading-3.5 mt-0.5 -tracking-normal text-pretty px-0.5"
+                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
               >
                 {{ displayErrors.phone }}
               </div>
@@ -250,8 +250,8 @@ const handleFileChange = (event) => {
           </div>
         </div>
         <div class="sm:col-span-2">
-          <div class="flex justify-between items-center">
-            <p class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg">
+          <div class="flex items-center justify-between">
+            <p class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide">
               Images
             </p>
             <label for="file-upload" class="btn p-1"> Choose images </label>
@@ -270,7 +270,7 @@ const handleFileChange = (event) => {
             <div
               v-for="(file, index) in selectedFiles"
               :key="index"
-              class="text-xs px-3 py-2 rounded-lg border bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg shadow-sm max-w-1/2"
+              class="bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg max-w-1/2 rounded-lg border px-3 py-2 text-xs shadow-sm"
             >
               {{ file.name }}
             </div>
@@ -280,10 +280,10 @@ const handleFileChange = (event) => {
           <div class="flex items-baseline">
             <label
               for="message"
-              class="block text-sm font-medium font-sec tracking-wide text-fg2 dark:text-fg"
+              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
               >Message
             </label>
-            <span class="text-red-500 text-xl mx-2">*</span>
+            <span class="mx-2 text-xl text-red-500">*</span>
           </div>
           <div class="relative">
             <textarea
@@ -297,7 +297,7 @@ const handleFileChange = (event) => {
             <Transition>
               <div
                 v-if="displayErrors.message"
-                class="absolute flex text-red-400 dark:text-red-400 text-xs sm:text-sm line-clamp-2 leading-3.5 mt-0.5 tracking-normal text-pretty px-0.5"
+                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 tracking-normal text-pretty text-red-400 sm:text-sm dark:text-red-400"
               >
                 {{ displayErrors.message }}
               </div>
@@ -305,10 +305,10 @@ const handleFileChange = (event) => {
           </div>
         </div>
       </div>
-      <div class="mt-8 space-y-4 text-center block sm:flex sm:justify-between">
-        <p class="text-sm text-fg2 dark:text-fg">
+      <div class="mt-8 block space-y-4 text-center sm:flex sm:justify-between">
+        <p class="text-fg2 dark:text-fg text-sm">
           Fields marked with
-          <span class="text-red-500 dark:text-red-400 sm:text-xl mx-0.5 sm:mx-2">*</span> are
+          <span class="mx-0.5 text-red-500 sm:mx-2 sm:text-xl dark:text-red-400">*</span> are
           mandatory
         </p>
         <button type="submit" @click.prevent="onSubmit()" class="btn">Send message</button>

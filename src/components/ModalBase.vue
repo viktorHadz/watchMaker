@@ -4,21 +4,21 @@
     <transition name="modal">
       <div
         v-if="isOpen"
-        class="fixed z-[99] flex items-center justify-center sm:items-center bg-black/50 top-0 left-0 w-full h-full transition-all duration-initial"
+        class="fixed top-0 left-0 z-[99] flex h-full w-full items-center justify-center bg-black/50 transition-all duration-initial sm:items-center"
         @click.self="close"
         @keydown.esc="close"
         tabindex="0"
         ref="modalRoot"
       >
         <div
-          class="bg-primary rounded-t-2xl sm:rounded-xl shadow-xl w-full sm:max-w-lg max-h-[90dvh] overflow-y-auto"
+          class="bg-primary max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl shadow-xl sm:max-w-lg sm:rounded-xl"
           role="dialog"
           aria-modal="true"
         >
           <div class="p-4 sm:p-6">
             <header
               v-if="$slots.header"
-              class="mb-4 sticky top-0 bg-primary z-10 py-3 border-b border-fg/10"
+              class="bg-primary border-fg/10 sticky top-0 z-10 mb-4 border-b py-3"
             >
               <slot name="header" />
             </header>
@@ -29,7 +29,7 @@
 
             <footer
               v-if="$slots.footer"
-              class="mt-6 sticky bottom-0 bg-primary py-3 border-t border-fg/10"
+              class="bg-primary border-fg/10 sticky bottom-0 mt-6 border-t py-3"
             >
               <slot name="footer" />
             </footer>

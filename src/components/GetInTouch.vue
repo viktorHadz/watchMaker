@@ -1,12 +1,12 @@
 <template>
-  <div class="max-w-xl p-4 sm:px-12 z-10">
-    <h2 class="text-2xl sm:text-3xl font-medium tracking-wide -mb-1 text-nowrap text-left font-sec">
+  <div class="z-10 max-w-xl p-4 sm:px-12">
+    <h2 class="font-sec text-left text-2xl font-medium tracking-wide text-nowrap sm:text-3xl">
       Get in touch
     </h2>
-    <h3 class="text-xl/6 font-medium font-sec tracking-tight dark:text-acc/80 text-acc">
+    <h3 class="font-sec dark:text-acc/80 text-acc text-lg font-medium tracking-tight sm:text-xl/6">
       If it's about watches, you're in the right place
     </h3>
-    <ul class="sm:list-disc text-fg/80">
+    <ul class="text-fg/80 sm:list-disc">
       <li class="mt-4 text-base/7">
         I'm happy to take on repair work of all kinds — vintage, modern, quartz, automatic... if
         it's built to be fixed, I will be glad to take a look. Leave me a message and we can decide

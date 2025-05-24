@@ -114,11 +114,11 @@
 
 @layer components {
   .input {
-    @apply block w-full rounded-md bg-primary dark:bg-sec-mute px-2 py-1 text-sm outline-1 -outline-offset-1 outline-brdr placeholder:text-fg/70 text-fg focus:outline-2 focus:-outline-offset-2 focus:outline-acc placeholder:text-sm hover:placeholder:brightness-110;
+    @apply bg-primary dark:bg-sec-mute outline-brdr placeholder:text-fg/70 text-fg focus:outline-acc block w-full rounded-md px-2 py-1 text-sm outline-1 -outline-offset-1 placeholder:text-sm hover:placeholder:brightness-110 focus:outline-2 focus:-outline-offset-2;
   }
 }
 @layer components {
   .btn {
-    @apply rounded-md bg-acc px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-acc/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc cursor-pointer;
+    @apply bg-acc hover:bg-acc/90 focus-visible:outline-acc cursor-pointer rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2;
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <div class="card-inner">
-      <div class="card-front text-2xl font-bold bg-white text-black">ACE OF SPADES</div>
-      <div class="card-back text-5xl bg-red-500 text-black">♠</div>
+      <div class="card-front bg-white text-2xl font-bold text-black">ACE OF SPADES</div>
+      <div class="card-back bg-red-500 text-5xl text-black">♠</div>
     </div>
   </div>
 </template>

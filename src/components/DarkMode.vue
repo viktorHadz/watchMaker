@@ -20,7 +20,7 @@ const toggleMode = () => {
   <button @click="toggleMode" class="cursor-pointer">
     <transition name="rotate-element" mode="out-in">
       <div :key="mode" class="icon-wrapper">
-        <component :is="mode === 'dark' ? SunIcon : MoonIcon" class="w-8 h-8 stroke-1" />
+        <component :is="mode === 'dark' ? SunIcon : MoonIcon" class="h-8 w-8 stroke-1" />
       </div>
     </transition>
   </button>

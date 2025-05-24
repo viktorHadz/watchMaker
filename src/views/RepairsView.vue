@@ -1,26 +1,26 @@
 <template>
-  <div class="relative w-full h-full">
+  <div class="relative h-full w-full">
     <div
-      class="relative mx-auto max-w-7xl grid grid-cols-1 gap-0 lg:grid-cols-2 px-4 sm:px-12 md:px-24 lg:px-4 z-10"
+      class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-0 px-4 sm:px-12 md:px-24 lg:grid-cols-2 lg:px-4"
     >
       <div
-        class="h-full flex flex-col gap-6 bg-primary border border-brdr rounded-b border-t-0 lg:border-r-0 lg:rounded-bl"
+        class="bg-primary border-brdr flex h-full flex-col gap-6 rounded-b border border-t-0 lg:rounded-bl lg:border-r-0"
       >
         <GetInTouch />
-        <hr class="lg:hidden w-full mask-x-from-0%" />
+        <hr class="w-full mask-x-from-0% lg:hidden" />
         <div
-          class="flex gap-x-1 pl-2 md:pl-8 pb-4 items-center text-xl text-fg font-sec font-medium w-fit cursor-pointer hover:text-acc hover:font-semibold duration-75"
+          class="text-fg font-sec hover:text-acc flex w-fit cursor-pointer items-center gap-x-1 pb-4 pl-2 text-lg font-medium duration-75 hover:font-semibold sm:text-xl md:pl-8"
           @click="showModal = true"
         >
-          <CurrencyPoundIcon class="size-6 stroke-1.5" />
+          <CurrencyPoundIcon class="stroke-1.5 size-6" />
           <p>Price list</p>
         </div>
       </div>
-      <div class="w-full flex flex-col items-center">
+      <div class="flex w-full flex-col items-center">
         <ContactForm />
         <ModalBase v-model="showModal">
           <template #header>
-            <h2 class="text-2xl font-medium tracking-wider text-center text-fg font-sec">
+            <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
               Service Price List
             </h2>
           </template>
@@ -34,9 +34,9 @@
       </div>
     </div>
     <!-- FIXED BACKGROUND -->
-    <div class="fixed bottom-0 right-0 min-h-fit max-h-full min-w-full max-w-full">
+    <div class="fixed right-0 bottom-0 max-h-full min-h-fit max-w-full min-w-full">
       <div
-        class="static bg-cover bg-[url(../assets/pictures/MechBg.webp)] dark:bg-[url(../assets/pictures/MechBg-Light.webp)] dark:brightness-50 min-w-screen min-h-[400px] lg:min-h-[600px] max-w-screen max-h-[600px] isolate pointer-events-none z-0"
+        class="pointer-events-none static isolate z-0 max-h-[600px] min-h-[400px] max-w-screen min-w-screen bg-[url(../assets/pictures/MechBg.webp)] bg-cover lg:min-h-[600px] dark:bg-[url(../assets/pictures/MechBg-Light.webp)] dark:brightness-50"
       ></div>
     </div>
   </div>

@@ -23,17 +23,17 @@ watch(expanded, () => {
 <template>
   <!-- Desktop sidebar -->
   <header
-    class="hidden sm:flex flex-col justify-between bg-sec dark:text-fg text-fg2 text-lg font-medium transition-[width] duration-500 ease-in-out overflow-hidden min-h-[100%] flex-shrink-0 font-sec z-50"
+    class="bg-sec dark:text-fg text-fg2 font-sec z-50 hidden min-h-[100%] flex-shrink-0 flex-col justify-between overflow-hidden text-lg font-medium transition-[width] duration-500 ease-in-out sm:flex"
     :style="{ width: expanded ? '150px' : '60px' }"
   >
     <div class="sticky top-0">
       <Transition name="fade-slide" mode="out-in">
-        <nav v-if="expanded" key="expanded" class="flex flex-col items-center p-4 gap-y-4">
+        <nav v-if="expanded" key="expanded" class="flex flex-col items-center gap-y-4 p-4">
           <RouterLink to="/" class="hover:text-acc">Home</RouterLink>
           <RouterLink to="/repairs" class="hover:text-acc">Repairs</RouterLink>
           <RouterLink to="/my-work" class="hover:text-acc whitespace-nowrap">My Work</RouterLink>
         </nav>
-        <nav v-else key="collapsed" class="flex flex-col items-center p-4 gap-y-6">
+        <nav v-else key="collapsed" class="flex flex-col items-center gap-y-6 p-4">
           <RouterLink to="/" class="hover:text-acc">
             <HomeIcon class="size-7" />
           </RouterLink>
@@ -50,7 +50,7 @@ watch(expanded, () => {
     <div class="sticky bottom-4 flex flex-col items-center justify-center gap-12">
       <button
         @click="expanded = !expanded"
-        class="relative flex items-center justify-center hover:text-acc cursor-pointer"
+        class="hover:text-acc relative flex cursor-pointer items-center justify-center"
       >
         <div class="absolute">
           <Transition :name="dynamicName" mode="out-in">
@@ -67,21 +67,21 @@ watch(expanded, () => {
 
   <!-- Mobile bottom nav -->
   <nav
-    class="fixed bottom-0 left-0 right-0 flex sm:hidden justify-around items-center bg-sec dark:text-fg text-fg2 py-3 border-t border-fg/20 z-50"
+    class="bg-sec dark:text-fg text-fg2 border-fg/20 fixed right-0 bottom-0 left-0 z-50 flex items-center justify-around border-t py-3 sm:hidden"
   >
-    <RouterLink to="/" class="flex flex-col items-center text-sm hover:text-acc">
+    <RouterLink to="/" class="hover:text-acc flex flex-col items-center text-sm">
       <HomeIcon class="size-6" />
       <span>Home</span>
     </RouterLink>
-    <RouterLink to="/repairs" class="flex flex-col items-center text-sm hover:text-acc">
+    <RouterLink to="/repairs" class="hover:text-acc flex flex-col items-center text-sm">
       <WrenchIcon class="size-6" />
       <span>Repairs</span>
     </RouterLink>
-    <RouterLink to="/my-work" class="flex flex-col items-center text-sm hover:text-acc">
+    <RouterLink to="/my-work" class="hover:text-acc flex flex-col items-center text-sm">
       <PhotoIcon class="size-6" />
       <span>My Work</span>
     </RouterLink>
-    <div class="flex flex-col items-center text-sm hover:text-acc">
+    <div class="hover:text-acc flex flex-col items-center text-sm">
       <DarkMode class="size-6"></DarkMode>
       <span class="text-sm">Theme</span>
     </div>
