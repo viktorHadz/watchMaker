@@ -3,7 +3,6 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import sanitizeHtml from 'sanitize-html'
 import * as z from 'zod'
-
 const app = express()
 
 // Trust the proxy if behind one (important for correct IP detection)

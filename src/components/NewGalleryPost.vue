@@ -6,50 +6,65 @@ import { useToastStore } from '@/stores/toast'
 const toast = useToastStore()
 import pocketWatch from './icons/pocketWatch.vue'
 import { useDateFormat, useNow } from '@vueuse/core'
-
+import { usePostType } from '@/composables/utils'
+// Historic posts filled from DB
+const posts = ref([])
+// Empty object to use when creating new post
 const newPost = ref({
   title: '',
   bodyText: '',
-  titleImageUrl: [],
-  extraImagesUrl: [],
+  titleImage: [],
+  extraImages: [],
 })
-
-const posts = ref([])
+const postType = usePostType(newPost)
 function insertNew() {
-  if (!newPost.value.title) {
-    toast.showToast('Post title is required', 'error')
+  if (
+    newPost.value.title.trim() === '' &&
+    newPost.value.bodyText.trim() === '' &&
+    newPost.value.titleImage.length === 0 &&
+    newPost.value.extraImages.length === 0
+  ) {
+    toast.showToast('Сложи една снимка бе _)_', 'warning')
+    console.warn('Cannot create an empty post')
     return
   }
-  if (newPost.value.titleImageUrl.length === 0) {
-    toast.showToast('Title image is required', 'error')
+  if (
+    newPost.value.title.trim() === '' &&
+    newPost.value.bodyText.trim() === '' &&
+    newPost.value.titleImage.length === 0 &&
+    newPost.value.extraImages.length > 0
+  ) {
+    toast.showToast('Missing title image!', 'warning')
     return
   }
-  if (!newPost.value.bodyText) {
-    toast.showToast('Post body is required', 'error')
-    return
-  }
-  const date = captureDate()
-  const post = {
-    title: newPost.value.title,
-    bodyText: newPost.value.bodyText,
-    titleImageUrl: newPost.value.titleImageUrl[0],
-    extraImagesUrl: [...newPost.value.extraImagesUrl],
-    date: date,
-  }
+  try {
+    const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY')
+    const date = formatedCurrentDate.value
 
-  posts.value.push(post)
+    const post = {
+      title: newPost.value.title,
+      bodyText: newPost.value.bodyText,
+      titleImage: newPost.value.titleImage[0],
+      extraImages: [...newPost.value.extraImages],
+      date: date,
+      type: postType.value,
+    }
+    posts.value.push(post)
 
-  // Reset form
-  newPost.value = {
-    title: '',
-    bodyText: '',
-    titleImageUrl: [],
-    extraImagesUrl: [],
-    date: null,
+    // Reset form
+    newPost.value = {
+      title: '',
+      bodyText: '',
+      titleImage: [],
+      extraImages: [],
+      date: '',
+    }
+
+    console.log('Post created:', post)
+    toast.showToast('Post created!', 'success')
+  } catch (error) {
+    console.error('Error: ', error)
   }
-
-  console.log('Post created:', post)
-  toast.showToast('Post created!', 'success')
 }
 
 const titleDropZoneRef = ref(null)
@@ -62,7 +77,7 @@ const { isOverDropZone } = useDropZone(titleDropZoneRef, {
     if (!file || !file.type.startsWith('image/')) return
     const reader = new FileReader()
     reader.onload = (e) => {
-      newPost.value.titleImageUrl = [e.target.result]
+      newPost.value.titleImage = [e.target.result]
     }
     reader.readAsDataURL(file)
   },
@@ -77,7 +92,7 @@ const { isOverDropZone: isOverExtraDropZone } = useDropZone(extraImageDropZoneRe
       if (!file || !file.type.startsWith('image/')) return
       const reader = new FileReader()
       reader.onload = (e) => {
-        newPost.value.extraImagesUrl.push(e.target.result)
+        newPost.value.extraImages.push(e.target.result)
       }
       reader.readAsDataURL(file)
     })
@@ -92,7 +107,7 @@ function insertNewTitleImage(event) {
   if (!file) return
   const reader = new FileReader()
   reader.onload = (e) => {
-    newPost.value.titleImageUrl = [e.target.result]
+    newPost.value.titleImage = [e.target.result]
   }
   reader.readAsDataURL(file)
 }
@@ -101,29 +116,24 @@ function handleFileChange(event) {
   Array.from(event.target.files || []).forEach((file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
-      newPost.value.extraImagesUrl.push(e.target.result)
+      newPost.value.extraImages.push(e.target.result)
     }
     reader.readAsDataURL(file)
   })
-}
-const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY HH:mm:ss')
-const date = ref(null)
-function captureDate() {
-  const toCapture = formatedCurrentDate.value
-  toast.showToast(date.value)
-  return (date.value = toCapture)
 }
 </script>
 
 <template>
   <div>
     <section
-      class="border-brdr from-sec/80 to-sec text-fg2 mx-auto mb-4 flex w-full flex-col gap-6 rounded border bg-linear-to-br p-4 md:max-w-2xl md:px-8 lg:max-w-4xl 2xl:my-8 2xl:max-w-7xl"
+      class="border-brdr from-sec/80 to-sec text-fg2 mx-auto mb-4 flex w-full flex-col gap-6 rounded border bg-linear-to-t p-4 md:max-w-2xl md:px-8 lg:max-w-4xl 2xl:my-8 2xl:max-w-7xl"
     >
-      <button class="btn" @click="toast.showToast('TOasting', 'error')">Toast</button>
-
-      <header class="font-sec text-center text-2xl font-semibold md:text-3xl">
-        New Gallery Post
+      <header>
+        <h1 class="font-sec text-center text-2xl font-semibold md:text-3xl">New Gallery Post</h1>
+        <p class="font text-sbase text-center text-pretty">
+          Use this menu to insert new images in the gallery or blog posts. Click on the created post
+          to visualise how it will appear to your readers.
+        </p>
       </header>
 
       <!-- Image Title & Extras -->
@@ -132,7 +142,7 @@ function captureDate() {
         <section class="flex flex-1 flex-col space-y-4">
           <h2 class="font-sec text-center text-lg font-semibold">Title Image</h2>
           <div
-            v-if="newPost.titleImageUrl.length === 0"
+            v-if="newPost.titleImage.length === 0"
             ref="titleDropZoneRef"
             :class="[
               'flex flex-col items-center justify-center rounded-xs border-2 border-dashed text-center transition md:min-h-[250px]',
@@ -154,7 +164,7 @@ function captureDate() {
           <div v-else class="flex items-center justify-center py-4">
             <div class="border-brdr bg-muted/20 aspect-square w-40 overflow-hidden rounded border">
               <img
-                :src="newPost.titleImageUrl[0]"
+                :src="newPost.titleImage[0]"
                 alt="Title Image"
                 class="h-full w-full object-cover"
               />
@@ -186,7 +196,7 @@ function captureDate() {
             ]"
           >
             <div
-              v-if="newPost.extraImagesUrl.length === 0"
+              v-if="newPost.extraImages.length === 0"
               class="flex flex-col items-center justify-around py-4"
             >
               <div>
@@ -207,7 +217,7 @@ function captureDate() {
               class="grid grid-cols-2 justify-items-center gap-4 py-4 sm:grid-cols-3 lg:grid-cols-2"
             >
               <div
-                v-for="(img, index) in newPost.extraImagesUrl"
+                v-for="(img, index) in newPost.extraImages"
                 :key="index"
                 class="border-brdr bg-muted/20 aspect-square w-40 overflow-hidden rounded border"
               >
@@ -261,36 +271,43 @@ function captureDate() {
 
     <hr class="text-brdr my-8 mask-x-from-70% mask-x-to-98%" />
 
-    <!-- Preview Files List -->
+    <!-- GALLERY -->
     <ul
       role="list"
-      class="mb-24 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-8 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
+      class="mb-24 grid grid-cols-1 gap-y-6 px-10 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-8 sm:px-0 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
     >
       <li v-for="(post, i) in posts" :key="i" class="relative">
         <div
-          class="group focus-within:ring-acc bg-sec/90 overflow-hidden rounded focus-within:ring-2 md:max-h-[350px]"
+          class="group bg-sec/90 focus-within:ring-acc relative flex h-full max-h-[400px] flex-col overflow-hidden rounded focus-within:ring-2 md:max-h-[400px]"
         >
-          <div class="flex justify-center p-2">
+          <!-- IMAGE -->
+          <div :class="['relative flex-shrink-0', post.titleImage ? '' : 'bg-sec']">
             <img
-              :src="post.titleImageUrl"
+              :src="post.titleImage ? post.titleImage : '/src/assets/pictures/placeholder.png'"
               alt=""
-              class="pointer-events-none aspect-10/7 object-cover group-hover:opacity-85 md:max-h-[200px]"
+              class="pointer-events-none aspect-10/7 w-full object-cover group-hover:opacity-85"
             />
-            <button type="button" class="text-fg absolute inset-0 focus:outline-hidden">
-              <span class="sr-only">View details for {{ post.title }}</span>
-            </button>
           </div>
-          <div class="mx-2 flex justify-between p-2">
-            <div>
-              <p class="text-fg2 pointer-events-none block truncate text-xl font-medium">
+          <!-- TEXT CONTENT -->
+          <div class="flex flex-grow flex-col p-3">
+            <div v-if="post.type === 'blog' || post.type === 'mixed'" class="flex-grow">
+              <p class="text-fg2 font-sec line-clamp-1 text-lg font-bold">
                 {{ post.title }}
               </p>
-              <p class="text-fg2/80 pointer-events-none line-clamp-2 block text-base font-medium">
+              <p class="text-fg2/80 mt-1 line-clamp-1 text-base font-medium md:line-clamp-2">
                 {{ post.bodyText }}
               </p>
             </div>
-            <p class="text-fg2">Date</p>
+            <!-- DATE -->
+            <div class="text-fg2 mt-3 flex items-center justify-end text-sm font-semibold">
+              <span class="mr-1">Date:</span>
+              <span>{{ post.date }}</span>
+            </div>
           </div>
+          <!-- ACCESSIBLE OVERLAY BUTTON -->
+          <button type="button" class="absolute inset-0 z-10 focus:outline-none">
+            <span class="sr-only">View details for {{ post.title }}</span>
+          </button>
         </div>
       </li>
     </ul>
