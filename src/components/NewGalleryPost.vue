@@ -7,8 +7,10 @@ const toast = useToastStore()
 import pocketWatch from './icons/pocketWatch.vue'
 import { useDateFormat, useNow } from '@vueuse/core'
 import { usePostType } from '@/composables/utils'
+
 // Historic posts filled from DB
 const posts = ref([])
+
 // Empty object to use when creating new post
 const newPost = ref({
   title: '',
@@ -16,7 +18,14 @@ const newPost = ref({
   titleImage: [],
   extraImages: [],
 })
+
+// Computes the post type(see return sig)
 const postType = usePostType(newPost)
+
+// Refs for file inputs
+const titleFileInputRef = ref(null)
+const extraFileInputRef = ref(null)
+
 function insertNew() {
   if (
     newPost.value.title.trim() === '' &&
@@ -24,7 +33,7 @@ function insertNew() {
     newPost.value.titleImage.length === 0 &&
     newPost.value.extraImages.length === 0
   ) {
-    toast.showToast('Сложи една снимка бе _)_', 'warning')
+    toast.showToast('Сложи поне една снимка бе _)_', 'warning')
     console.warn('Cannot create an empty post')
     return
   }
@@ -37,34 +46,31 @@ function insertNew() {
     toast.showToast('Missing title image!', 'warning')
     return
   }
-  try {
-    const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY')
-    const date = formatedCurrentDate.value
+  const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY')
+  const date = formatedCurrentDate.value
 
-    const post = {
-      title: newPost.value.title,
-      bodyText: newPost.value.bodyText,
-      titleImage: newPost.value.titleImage[0],
-      extraImages: [...newPost.value.extraImages],
-      date: date,
-      type: postType.value,
-    }
-    posts.value.push(post)
-
-    // Reset form
-    newPost.value = {
-      title: '',
-      bodyText: '',
-      titleImage: [],
-      extraImages: [],
-      date: '',
-    }
-
-    console.log('Post created:', post)
-    toast.showToast('Post created!', 'success')
-  } catch (error) {
-    console.error('Error: ', error)
+  const post = {
+    postId: 1, // DO NOT IGNORE ME!!! ----- NEED TO EDIT THIS ----- DO NOT IGNORE ME!!!
+    title: newPost.value.title,
+    bodyText: newPost.value.bodyText,
+    titleImage: newPost.value.titleImage[0],
+    extraImages: [...newPost.value.extraImages],
+    date: date,
+    type: postType.value,
   }
+  posts.value.push(post)
+
+  // Reset form
+  newPost.value = {
+    title: '',
+    bodyText: '',
+    titleImage: [],
+    extraImages: [],
+    date: '',
+  }
+
+  console.log('Post created:', post)
+  toast.showToast('Post created!', 'success')
 }
 
 const titleDropZoneRef = ref(null)
@@ -101,6 +107,15 @@ const { isOverDropZone: isOverExtraDropZone } = useDropZone(extraImageDropZoneRe
   multiple: true,
 })
 
+// File Upload Functions using refs
+function triggerTitleUpload() {
+  titleFileInputRef.value?.click()
+}
+
+function triggerExtraUpload() {
+  extraFileInputRef.value?.click()
+}
+
 // File Upload Fallbacks
 function insertNewTitleImage(event) {
   const file = event.target.files?.[0]
@@ -121,195 +136,522 @@ function handleFileChange(event) {
     reader.readAsDataURL(file)
   })
 }
+
+// Remove image functions
+function removeTitleImage() {
+  newPost.value.titleImage = []
+}
+
+function removeExtraImage(index) {
+  newPost.value.extraImages.splice(index, 1)
+}
 </script>
 
 <template>
-  <div>
-    <section
-      class="border-brdr from-sec/80 to-sec text-fg2 mx-auto mb-4 flex w-full flex-col gap-6 rounded border bg-linear-to-t p-4 md:max-w-2xl md:px-8 lg:max-w-4xl 2xl:my-8 2xl:max-w-7xl"
-    >
-      <header>
-        <h1 class="font-sec text-center text-2xl font-semibold md:text-3xl">New Gallery Post</h1>
-        <p class="font text-sbase text-center text-pretty">
-          Use this menu to insert new images in the gallery or blog posts. Click on the created post
-          to visualise how it will appear to your readers.
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50/20 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+  >
+    <!-- Background Pattern -->
+    <div
+      class="absolute inset-0 opacity-20"
+      style="
+        background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 20px,
+          rgb(245 158 11 / 0.1) 20px,
+          rgb(245 158 11 / 0.1) 40px
+        );
+      "
+    ></div>
+
+    <div class="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-12 text-center">
+        <h1 class="font-sec text-fg mb-4 text-4xl font-semibold lg:text-5xl">Gallery Management</h1>
+        <p class="text-fg/70 mx-auto max-w-3xl text-xl">
+          Share your latest watch restorations and horological achievements
         </p>
-      </header>
+      </div>
 
-      <!-- Image Title & Extras -->
-      <section class="flex flex-col gap-8 md:flex-row md:gap-x-12">
-        <!-- Title Image Section -->
-        <section class="flex flex-1 flex-col space-y-4">
-          <h2 class="font-sec text-center text-lg font-semibold">Title Image</h2>
-          <div
-            v-if="newPost.titleImage.length === 0"
-            ref="titleDropZoneRef"
-            :class="[
-              'flex flex-col items-center justify-center rounded-xs border-2 border-dashed text-center transition md:min-h-[250px]',
-              isOverDropZone ? 'border-acc bg-acc/10' : 'border-brdr/80 px-0 sm:px-4',
-            ]"
-          >
-            <div class="flex w-full items-center justify-around py-4">
-              <pocketWatch
-                class="text-acc/80 dark:text-acc/40 size-14 -rotate-30 stroke-5 sm:size-26 md:hidden"
-              />
-              <placeHolder class="text-acc dark:text-acc/60 size-22 sm:size-32" />
-              <pocketWatch
-                class="text-acc/80 dark:text-acc/40 size-14 rotate-30 stroke-5 sm:size-26 md:hidden"
-              />
-            </div>
-            <span class="hidden truncate p-2 text-sm md:block">Drag and drop title image here</span>
-          </div>
-          <!-- Title Image Preview -->
-          <div v-else class="flex items-center justify-center py-4">
-            <div class="border-brdr bg-muted/20 aspect-square w-40 overflow-hidden rounded border">
-              <img
-                :src="newPost.titleImage[0]"
-                alt="Title Image"
-                class="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-
-          <input
-            type="file"
-            id="title-upload"
-            name="title-image"
-            accept="image/jpeg,image/png,image/webp"
-            class="hidden"
-            @change="insertNewTitleImage"
-          />
-          <div class="flex justify-center pt-2">
-            <label for="title-upload" class="btn">Upload Title Image</label>
-          </div>
-        </section>
-
-        <!-- Extra Images Section -->
-        <section class="flex flex-1 flex-col space-y-4">
-          <h2 class="font-sec text-center text-lg font-semibold">Extra Images</h2>
-          <!-- Drop Zone Extras -->
-          <div
-            ref="extraImageDropZoneRef"
-            :class="[
-              'flex flex-col items-center justify-center rounded-xs border-2 border-dashed text-center transition md:min-h-[250px]',
-              isOverExtraDropZone ? 'border-acc bg-acc/10 shrink-0' : 'border-brdr/80 px-4',
-            ]"
-          >
-            <div
-              v-if="newPost.extraImages.length === 0"
-              class="flex flex-col items-center justify-around py-4"
-            >
-              <div>
-                <pocketWatch
-                  class="text-acc/80 dark:text-acc/40 size-14 -rotate-30 stroke-5 sm:size-26 md:hidden"
-                />
-                <placeHolder class="text-acc dark:text-acc/60 size-22 sm:size-32" />
-                <pocketWatch
-                  class="text-acc/80 dark:text-acc/40 size-14 rotate-30 stroke-5 sm:size-26 md:hidden"
-                />
-              </div>
-              <span class="text-sm">Drag and drop extra images here</span>
-            </div>
-
-            <!-- Extra Image Previews -->
-            <div
-              v-else
-              class="grid grid-cols-2 justify-items-center gap-4 py-4 sm:grid-cols-3 lg:grid-cols-2"
-            >
-              <div
-                v-for="(img, index) in newPost.extraImages"
-                :key="index"
-                class="border-brdr bg-muted/20 aspect-square w-40 overflow-hidden rounded border"
-              >
-                <img :src="img" class="h-full w-full object-cover" />
-              </div>
-            </div>
-          </div>
-
-          <input
-            type="file"
-            id="extra-upload"
-            name="extra-images"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            class="hidden"
-            @change="handleFileChange"
-          />
-          <div class="flex justify-center pt-2">
-            <label for="extra-upload" class="btn">Upload Extra Images</label>
-          </div>
-        </section>
-      </section>
-
-      <!-- Post Title & Body -->
-      <section class="my-6 space-y-6">
-        <div>
-          <h2 class="font-sec mb-1 text-lg font-semibold">Post Title</h2>
-          <input
-            v-model="newPost.title"
-            type="text"
-            class="input w-full text-lg placeholder:text-lg"
-            placeholder="New post title..."
-          />
-        </div>
-
-        <div>
-          <h2 class="font-sec mb-1 text-lg font-semibold">Post Body</h2>
-          <textarea
-            v-model="newPost.bodyText"
-            rows="6"
-            class="input w-full text-lg placeholder:text-lg"
-            placeholder="New post body..."
-          ></textarea>
-        </div>
-
-        <div class="flex justify-center">
-          <button class="btn" @click="insertNew">Create New</button>
-        </div>
-      </section>
-    </section>
-
-    <hr class="text-brdr my-8 mask-x-from-70% mask-x-to-98%" />
-
-    <!-- GALLERY -->
-    <ul
-      role="list"
-      class="mb-24 grid grid-cols-1 gap-y-6 px-10 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-8 sm:px-0 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
-    >
-      <li v-for="(post, i) in posts" :key="i" class="relative">
+      <!-- CREATE NEW POST SECTION -->
+      <section class="mx-auto mb-16 max-w-6xl">
         <div
-          class="group bg-sec/90 focus-within:ring-acc relative flex h-full max-h-[400px] flex-col overflow-hidden rounded focus-within:ring-2 md:max-h-[400px]"
+          class="overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/90"
         >
-          <!-- IMAGE -->
-          <div :class="['relative flex-shrink-0', post.titleImage ? '' : 'bg-sec']">
-            <img
-              :src="post.titleImage ? post.titleImage : '/src/assets/pictures/placeholder.png'"
-              alt=""
-              class="pointer-events-none aspect-10/7 w-full object-cover group-hover:opacity-85"
-            />
-          </div>
-          <!-- TEXT CONTENT -->
-          <div class="flex flex-grow flex-col p-3">
-            <div v-if="post.type === 'blog' || post.type === 'mixed'" class="flex-grow">
-              <p class="text-fg2 font-sec line-clamp-1 text-lg font-bold">
-                {{ post.title }}
-              </p>
-              <p class="text-fg2/80 mt-1 line-clamp-1 text-base font-medium md:line-clamp-2">
-                {{ post.bodyText }}
-              </p>
-            </div>
-            <!-- DATE -->
-            <div class="text-fg2 mt-3 flex items-center justify-end text-sm font-semibold">
-              <span class="mr-1">Date:</span>
-              <span>{{ post.date }}</span>
+          <!-- Form Header -->
+          <div
+            class="from-acc/10 via-acc/5 border-brdr/10 border-b bg-gradient-to-r to-transparent p-8"
+          >
+            <div class="flex items-center space-x-4">
+              <div class="bg-acc/20 flex h-12 w-12 items-center justify-center rounded-xl">
+                <svg class="text-acc h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="font-sec text-fg text-2xl font-semibold">Create New Post</h2>
+                <p class="text-fg/70">Share your latest work with the community</p>
+              </div>
             </div>
           </div>
-          <!-- ACCESSIBLE OVERLAY BUTTON -->
-          <button type="button" class="absolute inset-0 z-10 focus:outline-none">
-            <span class="sr-only">View details for {{ post.title }}</span>
-          </button>
+
+          <div class="p-8">
+            <!-- Image Upload Section -->
+            <div class="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <!-- Title Image Section -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-sec text-fg text-lg font-semibold">Featured Image</h3>
+                  <span class="text-fg/60 bg-acc/10 rounded-full px-2 py-1 text-sm">Required</span>
+                </div>
+
+                <div
+                  v-if="newPost.titleImage.length === 0"
+                  ref="titleDropZoneRef"
+                  :class="[
+                    'group relative flex min-h-[280px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300',
+                    isOverDropZone
+                      ? 'border-acc bg-acc/10 scale-[1.02]'
+                      : 'hover:border-acc/50 hover:bg-acc/5 border-slate-300 dark:border-slate-600',
+                  ]"
+                  @click="triggerTitleUpload"
+                >
+                  <div class="space-y-4 text-center">
+                    <div class="flex items-center justify-center space-x-4">
+                      <pocketWatch class="text-acc/60 h-12 w-12 -rotate-12 animate-pulse" />
+                      <placeHolder class="text-acc/80 h-16 w-16" />
+                      <pocketWatch class="text-acc/60 h-12 w-12 rotate-12 animate-pulse" />
+                    </div>
+                    <div class="space-y-2">
+                      <p class="text-fg font-medium">Drop your featured image here</p>
+                      <p class="text-fg/60 text-sm">or click to browse files</p>
+                      <p class="text-fg/40 text-xs">JPEG, PNG, WebP up to 10MB</p>
+                    </div>
+                  </div>
+
+                  <!-- Upload Icon -->
+                  <div
+                    class="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white/80 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-slate-700/80"
+                  >
+                    <svg
+                      class="text-acc h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Title Image Preview -->
+                <div v-else class="group relative">
+                  <div class="relative overflow-hidden rounded-xl">
+                    <img
+                      :src="newPost.titleImage[0]"
+                      alt="Featured Image"
+                      class="h-64 w-full object-cover"
+                    />
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      <div
+                        class="absolute right-4 bottom-4 left-4 flex items-center justify-between"
+                      >
+                        <span class="rounded bg-black/30 px-2 py-1 text-sm font-medium text-white"
+                          >Featured Image</span
+                        >
+                        <button
+                          @click="removeTitleImage"
+                          class="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+                        >
+                          <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  ref="titleFileInputRef"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  class="hidden"
+                  @change="insertNewTitleImage"
+                />
+              </div>
+
+              <!-- Extra Images Section -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-sec text-fg text-lg font-semibold">Additional Images</h3>
+                  <span
+                    class="text-fg/60 rounded-full bg-slate-100 px-2 py-1 text-sm dark:bg-slate-700"
+                    >Optional</span
+                  >
+                </div>
+
+                <div
+                  ref="extraImageDropZoneRef"
+                  :class="[
+                    'group relative min-h-[280px] cursor-pointer rounded-xl border-2 border-dashed transition-all duration-300',
+                    isOverExtraDropZone
+                      ? 'border-acc bg-acc/10 scale-[1.02]'
+                      : 'hover:border-acc/50 border-slate-300 dark:border-slate-600',
+                  ]"
+                  @click="triggerExtraUpload"
+                >
+                  <div
+                    v-if="newPost.extraImages.length === 0"
+                    class="flex h-full flex-col items-center justify-center p-6"
+                  >
+                    <div class="space-y-4 text-center">
+                      <div class="flex items-center justify-center space-x-4">
+                        <pocketWatch class="text-acc/60 h-10 w-10 -rotate-12" />
+                        <placeHolder class="text-acc/80 h-14 w-14" />
+                        <pocketWatch class="text-acc/60 h-10 w-10 rotate-12" />
+                      </div>
+                      <div class="space-y-2">
+                        <p class="text-fg font-medium">Add more photos</p>
+                        <p class="text-fg/60 text-sm">Drop multiple images or click to browse</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Extra Images Grid -->
+                  <div v-else class="p-4">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div
+                        v-for="(img, index) in newPost.extraImages"
+                        :key="index"
+                        class="group relative"
+                      >
+                        <div class="relative aspect-square overflow-hidden rounded-lg">
+                          <img :src="img" class="h-full w-full object-cover" />
+                          <div
+                            class="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30"
+                          >
+                            <button
+                              @click.stop="removeExtraImage(index)"
+                              class="h-8 w-8 rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                            >
+                              <svg
+                                class="mx-auto h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"
+                                ></path>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Add More Button -->
+                      <div
+                        class="border-acc/30 hover:bg-acc/5 flex aspect-square items-center justify-center rounded-lg border-2 border-dashed transition-colors"
+                      >
+                        <svg
+                          class="text-acc/60 h-8 w-8"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  ref="extraFileInputRef"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  class="hidden"
+                  @change="handleFileChange"
+                />
+              </div>
+            </div>
+
+            <!-- Text Content Section -->
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="font-sec text-fg text-lg font-semibold">Post Title</label>
+                  <input
+                    v-model="newPost.title"
+                    type="text"
+                    class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+                    placeholder="Give your post a compelling title..."
+                  />
+                </div>
+
+                <div class="flex items-end">
+                  <div class="w-full">
+                    <div class="mb-2 flex items-center justify-between">
+                      <span class="font-sec text-fg text-sm font-medium">Post Type</span>
+                      <span class="bg-acc/10 text-acc rounded-full px-2 py-1 text-xs">{{
+                        postType || 'Auto-detected'
+                      }}</span>
+                    </div>
+                    <div
+                      class="flex h-12 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 dark:border-slate-600 dark:bg-slate-700"
+                    >
+                      <span class="text-fg/70 capitalize">{{
+                        postType || 'Will be detected automatically'
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="font-sec text-fg text-lg font-semibold">Description</label>
+                <textarea
+                  v-model="newPost.bodyText"
+                  rows="4"
+                  class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+                  placeholder="Describe the work done, techniques used, or story behind this piece..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="flex justify-center pt-8">
+              <button
+                @click="insertNew"
+                class="from-acc to-acc/80 hover:from-acc/90 hover:to-acc/70 focus:ring-acc/50 inline-flex transform items-center rounded-xl bg-gradient-to-r px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] focus:ring-2 focus:outline-none"
+              >
+                <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  ></path>
+                </svg>
+                Publish Post
+              </button>
+            </div>
+          </div>
         </div>
-      </li>
-    </ul>
+      </section>
+
+      <!-- GALLERY SECTION -->
+      <section class="mx-auto max-w-7xl">
+        <!-- Gallery Header -->
+        <div class="mb-12 text-center">
+          <div
+            class="inline-flex items-center space-x-3 rounded-2xl border border-white/20 bg-white/80 px-6 py-3 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/80"
+          >
+            <svg class="text-acc h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"
+              ></path>
+            </svg>
+            <h2 class="font-sec text-fg text-2xl font-semibold">Workshop Gallery</h2>
+          </div>
+          <p class="text-fg/70 mx-auto mt-4 max-w-2xl">
+            A showcase of precision craftsmanship and horological excellence
+          </p>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div v-if="posts.length === 0" class="py-16 text-center">
+          <div
+            class="bg-acc/10 mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-2xl"
+          >
+            <svg
+              class="text-acc/60 h-12 w-12"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="font-sec text-fg mb-2 text-xl font-semibold">No posts yet</h3>
+          <p class="text-fg/60">Create your first post to showcase your work</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <article
+            v-for="(post, i) in posts"
+            :key="i"
+            class="group cursor-pointer overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl dark:border-slate-700/50 dark:bg-slate-800/90"
+          >
+            <!-- Image -->
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img
+                :src="post.titleImage || '/src/assets/pictures/placeholder.png'"
+                :alt="post.title"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              ></div>
+
+              <!-- Post Type Badge -->
+              <div class="absolute top-3 left-3">
+                <span
+                  class="text-fg inline-flex items-center rounded-full border border-white/20 bg-white/90 px-2 py-1 text-xs font-medium dark:bg-slate-800/90"
+                >
+                  {{ post.type }}
+                </span>
+              </div>
+
+              <!-- Date Badge -->
+              <div class="absolute top-3 right-3">
+                <span
+                  class="text-fg inline-flex items-center rounded-full border border-white/20 bg-white/90 px-2 py-1 text-xs font-medium dark:bg-slate-800/90"
+                >
+                  {{ post.date }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+              <div v-if="post.type === 'blog' || post.type === 'mixed'" class="space-y-3">
+                <h3
+                  class="font-sec text-fg group-hover:text-acc line-clamp-2 text-lg font-semibold transition-colors"
+                >
+                  {{ post.title }}
+                </h3>
+                <p class="text-fg/70 line-clamp-3 text-sm leading-relaxed">
+                  {{ post.bodyText }}
+                </p>
+              </div>
+              <div v-else class="flex items-center justify-center py-4">
+                <div class="bg-acc/10 flex h-12 w-12 items-center justify-center rounded-xl">
+                  <svg
+                    class="text-acc h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Additional Images Indicator -->
+              <div
+                v-if="post.extraImages && post.extraImages.length > 0"
+                class="mt-4 border-t border-slate-200 pt-4 dark:border-slate-700"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-fg/60 text-xs">Additional photos</span>
+                  <div class="flex -space-x-2">
+                    <div
+                      v-for="(img, idx) in post.extraImages.slice(0, 3)"
+                      :key="idx"
+                      class="h-6 w-6 overflow-hidden rounded-full border-2 border-white dark:border-slate-800"
+                    >
+                      <img :src="img" class="h-full w-full object-cover" />
+                    </div>
+                    <div
+                      v-if="post.extraImages.length > 3"
+                      class="bg-acc/20 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white dark:border-slate-800"
+                    >
+                      <span class="text-acc text-xs font-medium"
+                        >+{{ post.extraImages.length - 3 }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hover Action Buttons -->
+            <div
+              class="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/80 via-transparent to-transparent pb-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            >
+              <div class="flex space-x-3">
+                <button
+                  class="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  class="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
   </div>
 </template>

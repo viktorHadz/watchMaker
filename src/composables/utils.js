@@ -19,3 +19,9 @@ export function usePostType(object) {
   })
   return postType
 }
+
+export function useErrorOutline(displayErrors, fieldName) {
+  return computed(() => {
+    return displayErrors[fieldName] ? 'outline-2 outline-red-400 focus:outline-red-400' : ''
+  })
+}

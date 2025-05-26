@@ -1,11 +1,9 @@
 <template>
   <svg
-    width="515"
-    height="511"
     viewBox="0 0 515 511"
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
-    class="size-48"
+    class="size-52 md:size-62 lg:size-68"
   >
     <g id="Group 2 1" clip-path="url(#clip0_47_3211)">
       <g id="main-mechanism">

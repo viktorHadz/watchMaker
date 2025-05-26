@@ -1,53 +1,73 @@
+<!-- MAIN ENTRY FILE TEMPLATE -->
 <template>
-  <div class="relative h-full w-full">
+  <div
+    class="relative min-h-screen w-full bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+  >
+    <!-- Background Pattern -->
     <div
-      class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-0 px-4 sm:px-12 md:px-24 lg:grid-cols-2 lg:px-4"
-    >
-      <div
-        class="bg-primary border-brdr flex h-full flex-col gap-6 rounded-b border border-t-0 lg:rounded-bl lg:border-r-0"
-      >
-        <GetInTouch />
-        <hr class="w-full mask-x-from-0% lg:hidden" />
-        <div
-          class="text-fg font-sec hover:text-acc flex w-fit cursor-pointer items-center gap-x-1 pb-4 pl-2 text-lg font-medium duration-75 hover:font-semibold sm:text-xl md:pl-8"
-          @click="showModal = true"
-        >
-          <CurrencyPoundIcon class="stroke-1.5 size-6" />
-          <p>Price list</p>
+      class="absolute inset-0 opacity-20"
+      style="
+        background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 20px,
+          rgb(245 158 11 / 0.1) 20px,
+          rgb(245 158 11 / 0.1) 40px
+        );
+      "
+    ></div>
+
+    <div class="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <!-- Header Section -->
+      <div class="mb-16 text-center">
+        <h1 class="font-sec text-fg mb-4 text-4xl font-semibold lg:text-5xl">Get in Touch</h1>
+        <p class="text-fg/70 mx-auto max-w-3xl text-xl leading-relaxed">
+          Ready to restore your timepiece or discuss watchmaking? Let's bring your cherished watches
+          back to life.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-12">
+        <!-- Left Column - Get in Touch Info -->
+        <div class="lg:col-span-2">
+          <GetInTouch></GetInTouch>
+        </div>
+
+        <!-- Right Column - Contact Form -->
+        <div class="lg:col-span-3">
+          <div
+            class="overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/90"
+          >
+            <!-- Form Header -->
+            <div
+              class="from-acc/10 via-acc/5 border-brdr/10 border-b bg-gradient-to-r to-transparent p-8"
+            >
+              <h3 class="font-sec text-fg mb-2 text-2xl font-semibold">Send a Message</h3>
+              <p class="text-fg/70">Tell me about your timepiece and how I can help</p>
+            </div>
+
+            <!-- CONTACT FORM  -->
+            <ContactForm></ContactForm>
+          </div>
         </div>
       </div>
-      <div class="flex w-full flex-col items-center">
-        <ContactForm />
-        <ModalBase v-model="showModal">
-          <template #header>
-            <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
-              Service Price List
-            </h2>
-          </template>
-          <PriceList />
-          <template #footer>
-            <div class="text-center">
-              <button @click="showModal = false" class="btn">Close</button>
-            </div>
-          </template>
-        </ModalBase>
-      </div>
-    </div>
-    <!-- FIXED BACKGROUND -->
-    <div class="fixed right-0 bottom-0 max-h-full min-h-fit max-w-full min-w-full">
-      <div
-        class="pointer-events-none static isolate z-0 max-h-[600px] min-h-[400px] max-w-screen min-w-screen bg-[url(../assets/pictures/MechBg.webp)] bg-cover lg:min-h-[600px] dark:bg-[url(../assets/pictures/MechBg-Light.webp)] dark:brightness-50"
-      ></div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { CurrencyPoundIcon } from '@heroicons/vue/24/outline'
-import ModalBase from '@/components/ModalBase.vue'
-import PriceList from '@/components/PriceList.vue'
 import GetInTouch from '@/components/GetInTouch.vue'
 import ContactForm from '@/components/ContactForm.vue'
-const showModal = ref(false)
 </script>
+
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

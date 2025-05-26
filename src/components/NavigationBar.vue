@@ -1,3 +1,4 @@
+<!-- NavigationBar.vue -->
 <script setup>
 import { RouterLink } from 'vue-router'
 import { watch, ref } from 'vue'
@@ -12,118 +13,148 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const expanded = useStorage('navigation-expanded', true)
-const dynamicName = ref('')
+const animationClass = ref('collapse')
 
-watch(expanded, () => {
-  dynamicName.value = expanded.value ? 'not-expanded' : 'expanded'
-  console.log('Dynamic name: ', dynamicName.value)
-})
+watch(
+  expanded,
+  (newVal) => {
+    animationClass.value = newVal ? 'expand' : 'collapse'
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <!-- Desktop sidebar -->
   <header
-    class="bg-sec dark:text-fg text-fg2 font-sec z-50 hidden min-h-[100%] flex-shrink-0 flex-col justify-between overflow-hidden text-lg font-medium transition-[width] duration-500 ease-in-out sm:flex"
-    :style="{ width: expanded ? '150px' : '60px' }"
+    class="from-sec to-sec-mute dark:text-fg text-fg2 font-sec border-brdr hover:bg-dark hidden h-screen flex-shrink-0 flex-col justify-between overflow-hidden border-r bg-gradient-to-b text-lg font-medium transition-all duration-300 ease-out sm:flex"
+    :class="expanded ? 'w-40' : 'w-16'"
   >
-    <div class="sticky top-0">
-      <Transition name="fade-slide" mode="out-in">
-        <nav v-if="expanded" key="expanded" class="flex flex-col items-center gap-y-4 p-4">
-          <RouterLink to="/" class="hover:text-acc">Home</RouterLink>
-          <RouterLink to="/repairs" class="hover:text-acc">Repairs</RouterLink>
-          <RouterLink to="/my-work" class="hover:text-acc whitespace-nowrap">My Work</RouterLink>
+    <div class="pt-6">
+      <Transition name="nav-content" mode="out-in">
+        <nav v-if="expanded" key="expanded" class="flex flex-col items-center gap-y-6 px-4">
+          <RouterLink
+            to="/"
+            class="hover:text-acc router-link-active:text-acc transition-colors duration-200"
+          >
+            Home
+          </RouterLink>
+          <RouterLink
+            to="/repairs"
+            class="hover:text-acc router-link-active:text-acc transition-colors duration-200"
+          >
+            Repairs
+          </RouterLink>
+          <RouterLink
+            to="/my-work"
+            class="hover:text-acc router-link-active:text-acc whitespace-nowrap transition-colors duration-200"
+          >
+            My Work
+          </RouterLink>
         </nav>
-        <nav v-else key="collapsed" class="flex flex-col items-center gap-y-6 p-4">
-          <RouterLink to="/" class="hover:text-acc">
-            <HomeIcon class="size-7" />
+        <nav v-else key="collapsed" class="flex flex-col items-center gap-y-6 px-2">
+          <RouterLink
+            to="/"
+            class="hover:text-acc router-link-active:text-acc p-2 transition-colors duration-200"
+          >
+            <HomeIcon class="size-6" />
           </RouterLink>
-          <RouterLink to="/repairs" class="hover:text-acc">
-            <WrenchIcon class="size-7" />
+          <RouterLink
+            to="/repairs"
+            class="hover:text-acc router-link-active:text-acc p-2 transition-colors duration-200"
+          >
+            <WrenchIcon class="size-6" />
           </RouterLink>
-          <RouterLink to="/my-work" class="hover:text-acc">
-            <PhotoIcon class="size-7" />
+          <RouterLink
+            to="/my-work"
+            class="hover:text-acc router-link-active:text-acc p-2 transition-colors duration-200"
+          >
+            <PhotoIcon class="size-6" />
           </RouterLink>
         </nav>
       </Transition>
     </div>
 
-    <div class="sticky bottom-4 flex flex-col items-center justify-center gap-12">
+    <div class="flex flex-col items-center gap-8 pb-6">
       <button
         @click="expanded = !expanded"
-        class="hover:text-acc relative flex cursor-pointer items-center justify-center"
+        class="hover:text-acc p-2 transition-colors duration-200"
       >
-        <div class="absolute">
-          <Transition :name="dynamicName" mode="out-in">
-            <component
-              :is="expanded ? ChevronDoubleLeftIcon : ChevronDoubleRightIcon"
-              class="size-8"
-            />
-          </Transition>
-        </div>
+        <Transition :name="animationClass" mode="out-in">
+          <ChevronDoubleLeftIcon v-if="expanded" key="left" class="size-6" />
+          <ChevronDoubleRightIcon v-else key="right" class="size-6" />
+        </Transition>
       </button>
-      <DarkMode class="hover:text-acc" />
+      <DarkMode class="hover:text-acc transition-colors duration-200" />
     </div>
   </header>
 
   <!-- Mobile bottom nav -->
   <nav
-    class="bg-sec dark:text-fg text-fg2 border-fg/20 fixed right-0 bottom-0 left-0 z-50 flex items-center justify-around border-t py-3 sm:hidden"
+    class="dark:text-fg text-fg2 border-brdr from-sec to-sec-mute fixed right-0 bottom-0 left-0 z-[699] flex items-center justify-around border-t bg-gradient-to-l py-2 sm:hidden"
   >
-    <RouterLink to="/" class="hover:text-acc flex flex-col items-center text-sm">
+    <RouterLink
+      to="/"
+      class="hover:text-acc router-link-active:text-acc flex flex-col items-center gap-2 text-xs"
+    >
       <HomeIcon class="size-6" />
       <span>Home</span>
     </RouterLink>
-    <RouterLink to="/repairs" class="hover:text-acc flex flex-col items-center text-sm">
+    <RouterLink
+      to="/repairs"
+      class="hover:text-acc router-link-active:text-acc flex flex-col items-center gap-2 text-sm"
+    >
       <WrenchIcon class="size-6" />
       <span>Repairs</span>
     </RouterLink>
-    <RouterLink to="/my-work" class="hover:text-acc flex flex-col items-center text-sm">
+    <RouterLink
+      to="/my-work"
+      class="hover:text-acc router-link-active:text-acc flex flex-col items-center gap-2 text-sm"
+    >
       <PhotoIcon class="size-6" />
       <span>My Work</span>
     </RouterLink>
-    <div class="hover:text-acc flex flex-col items-center text-sm">
-      <DarkMode class="size-6"></DarkMode>
-      <span class="text-sm">Theme</span>
+    <div class="hover:text-acc flex flex-col items-center gap-2 text-sm">
+      <DarkMode class="size-5" />
+      <span>Theme</span>
     </div>
   </nav>
 </template>
 
 <style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition:
-    opacity 0.4s ease,
-    transform 0.3s ease;
+.nav-content-enter-active,
+.nav-content-leave-active {
+  transition: all 0.25s ease-out;
 }
 
-.fade-slide-enter-from,
-.fade-slide-leave-to {
+.nav-content-enter-from {
   opacity: 0;
   transform: translateX(-10px);
 }
 
-.fade-slide-enter-to,
-.fade-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
+.nav-content-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
 }
 
-.not-expanded-enter-active,
-.expanded-enter-active {
-  transition: all 0.4s ease-in-out;
-  transform-style: preserve-3d;
-  transform-origin: center center;
+.expand-enter-active,
+.collapse-enter-active {
+  transition: all 0.3s ease-out;
 }
 
-.not-expanded-enter-from,
-.expanded-enter-from {
-  transform: rotateY(180deg) scale(0.9);
-  opacity: 0.8;
+.expand-enter-from,
+.collapse-enter-from {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.8);
 }
 
-.not-expanded-enter-to,
-.expanded-enter-to {
-  transform: rotateY(0deg) scale(1);
-  opacity: 1;
+.expand-leave-to,
+.collapse-leave-to {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.8);
+}
+
+.router-link-active {
+  color: var(--color-acc);
 }
 </style>

@@ -18,14 +18,13 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 @custom-variant light (&:where([data-theme=light], [data-theme=light] *));
 [data-theme='light'] {
-  --color-primary: oklch(100% 0 0);
-  --color-sec: oklch(0.31 0.1637 263.98);
-  --color-sec-mute: oklch(0.33 0.1637 263.98);
-  --color-acc: oklch(0.74 0.1373 42.52);
+  --color-primary: oklch(98.7% 0.022 95.277);
+  --color-sec: oklch(0.3325 0.0321 233.09);
+  --color-sec-mute: oklch(0.4763 0.0291 229.74);
+  --color-acc: oklch(0.7407 0.1367 42.71);
 
-  --color-body-el: oklch(100% 0 0);
   --color-bordr: oklch(0.708 0 0);
-  --color-font: oklch(0.27 0.0055 286.03);
+  --color-font: oklch(0.28 0.0055 286.03);
   --color-font2: oklch(100% 0 0);
 
   --color-danger: oklch(0.737 0.237 25.331);
@@ -35,11 +34,10 @@
 [data-theme='dark'] {
   --color-primary: oklch(23.93% 0 0);
   --color-sec: oklch(0.205 0 0);
-  --color-sec-mute: oklch(0.22 0 0);
+  --color-sec-mute: oklch(0.23 0 0);
   --color-acc: oklch(0.74 0.1373 42.52);
 
-  --color-body-el: oklch(0.27 0.0055 286.03);
-  --color-bordr: oklch(0.439 0 0);
+  --color-bordr: oklch(0.3 0 0);
   --color-font: oklch(0.708 0 0);
   --color-font2: oklch(0.808 0 0);
 
@@ -62,7 +60,6 @@
   --color-acc: var(--color-acc);
   --color-ter: var(--color-ter);
 
-  --color-nav: var(--color-navigation);
   --color-brdr: var(--color-bordr);
   --color-fg: var(--color-font);
   --color-fg2: var(--color-font2);
@@ -120,5 +117,10 @@
 @layer components {
   .btn {
     @apply bg-acc hover:bg-acc/90 focus-visible:outline-acc cursor-pointer rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
+}
+@layer components {
+  .grad-container {
+    @apply border-brdr/50 via-primary w-full bg-radial-[at_50%_75%] from-amber-50 to-amber-100 drop-shadow-xl;
   }
 }

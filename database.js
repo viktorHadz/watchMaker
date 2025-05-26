@@ -1,6 +1,6 @@
-import Database from 'better-sqlite3';
+import Database from 'better-sqlite3'
+export const db = new Database('watchmaker-database.db', { verbose: console.log })
 export function initializeDatabase() {
-  const db = new Database('watchmaker-database.db', { verbose: console.log });
   // PRAGMAS
   db.pragma('journal_mode = WAL')
   db.pragma('synchronous = NORMAL')
@@ -10,21 +10,24 @@ export function initializeDatabase() {
   db.pragma('busy_timeout = 5000')
   db.pragma('foreign_keys = ON')
   // SCHEMA
-  const postsTable = db.prepare(`
+  const stmtPostsTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_id INTEGER NOT NULL,
       post_title TEXT,
       post_body TEXT,
+      date TEXT)`
+  )
+  stmtPostsTable.run()
 
-      date TEXT,
-  )`)
-  const imagesTable = db.prepare(`
+  const stmtImagesTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS post_images (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER,
+      post_id INTEGER NOT NULL,
       image_url TEXT,
       image_order INTEGER,
-      FOREIGN KEY (post_id) REFERENCES posts(id)
-  )`)
+      FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE)`
+  )
+  stmtImagesTable.run()
+
 }
-initializeDatabase()

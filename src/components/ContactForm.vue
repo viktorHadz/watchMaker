@@ -1,9 +1,10 @@
 <script setup>
-import { reactive, ref } from 'vue'
-import * as z from 'zod'
+import { reactive, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
+import { zodFormSchema } from '@/composables/formZodSchema'
 
 const toast = useToastStore()
+const formSchema = zodFormSchema
 
 const form = reactive({
   firstName: '',
@@ -13,41 +14,14 @@ const form = reactive({
   message: '',
 })
 
-const formSchema = z.object({
-  firstName: z
-    .string()
-    .trim()
-    .min(3, { message: 'First name must be at least 3 characters' })
-    .max(50, { message: 'First name cannot exceed 50 characters' })
-    .nonempty({ message: 'First name field cannot be empty' }),
-
-  lastName: z
-    .string()
-    .trim()
-    .min(3, { message: 'Last name must be at least 3 characters' })
-    .max(50, { message: 'Last name cannot exceed 50 characters' })
-    .nonempty({ message: 'Last name field cannot be empty' }),
-  email: z
-    .string()
-    .trim()
-    .email({ message: 'Field must be a valid email address' })
-    .max(254, { message: 'Email cannot exceed 254 characters' })
-    .nonempty({ message: 'Email field cannot be empty' }),
-  message: z
-    .string()
-    .trim()
-    .min(10, { message: 'Message must be at least 10 characters' })
-    .max(1000, { message: 'Message is too long' })
-    .nonempty({ message: 'Message field cannot be empty' }),
-  phone: z
-    .string()
-    .trim()
-    .max(25, { message: 'Phone number too long' })
-    .optional()
-    .or(z.literal('')),
+const fieldStates = reactive({
+  firstName: { touched: false, focused: false },
+  lastName: { touched: false, focused: false },
+  email: { touched: false, focused: false },
+  phone: { touched: false, focused: false },
+  message: { touched: false, focused: false },
 })
 
-const formattedError = ref(null)
 const displayErrors = reactive({
   firstName: '',
   lastName: '',
@@ -56,37 +30,127 @@ const displayErrors = reactive({
   phone: '',
 })
 
-const onSubmit = () => {
-  const result = formSchema.safeParse(form)
-  if (!result.success) {
-    console.log('Issue logged by result error: ', result.error.issues)
-    formattedError.value = result.error.format()
-    displayErrors.firstName = formattedError?.value.firstName?._errors[0]
-    displayErrors.lastName = formattedError?.value.lastName?._errors[0]
-    displayErrors.email = formattedError?.value.email?._errors[0]
-    displayErrors.message = formattedError?.value.message?._errors[0]
-    displayErrors.phone = formattedError?.value.phone?._errors[0]
-    toast.showToast('Please fix the errors.', 'error')
-
-    return
-  } else {
-    console.log(result)
-    console.log(result.data)
-
-    const formData = result.data
-    postData(formData)
-
-    clearForm()
-    toast.showToast('Your message was sent successfully!', 'success')
+// Validate individual field
+const validateField = (fieldName, value) => {
+  try {
+    const fieldSchema = formSchema.shape[fieldName]
+    fieldSchema.parse(value)
+    displayErrors[fieldName] = ''
+    return true
+  } catch (error) {
+    const errorMessage = error.errors?.[0]?.message || 'Invalid input'
+    displayErrors[fieldName] = errorMessage
+    return false
   }
 }
-const clearForm = () => {
-  form.firstName = ''
-  form.lastName = ''
-  form.email = ''
-  form.message = ''
-  form.phone = ''
+
+// Handle field focus
+const handleFocus = (fieldName) => {
+  fieldStates[fieldName].focused = true
 }
+
+// Handle field blur
+const handleBlur = (fieldName) => {
+  fieldStates[fieldName].focused = false
+  fieldStates[fieldName].touched = true
+
+  // Validate on blur if field has been touched
+  if (fieldStates[fieldName].touched) {
+    validateField(fieldName, form[fieldName])
+  }
+}
+
+// Debounced validation function
+let validationTimeouts = {}
+const debounceValidation = (fieldName, value, delay = 300) => {
+  clearTimeout(validationTimeouts[fieldName])
+  validationTimeouts[fieldName] = setTimeout(() => {
+    if (fieldStates[fieldName].touched) {
+      validateField(fieldName, value)
+    }
+  }, delay)
+}
+
+// Watch form fields for changes
+watch(
+  () => form.firstName,
+  (newVal) => {
+    debounceValidation('firstName', newVal)
+  },
+)
+
+watch(
+  () => form.lastName,
+  (newVal) => {
+    debounceValidation('lastName', newVal)
+  },
+)
+
+watch(
+  () => form.email,
+  (newVal) => {
+    debounceValidation('email', newVal)
+  },
+)
+
+watch(
+  () => form.phone,
+  (newVal) => {
+    debounceValidation('phone', newVal)
+  },
+)
+
+watch(
+  () => form.message,
+  (newVal) => {
+    debounceValidation('message', newVal)
+  },
+)
+
+const onSubmit = () => {
+  // Mark all fields as touched on submit
+  Object.keys(fieldStates).forEach((field) => {
+    fieldStates[field].touched = true
+  })
+
+  const result = formSchema.safeParse(form)
+
+  if (!result.success) {
+    // Update all field errors
+    const formattedError = result.error.format()
+    displayErrors.firstName = formattedError.firstName?._errors[0] || ''
+    displayErrors.lastName = formattedError.lastName?._errors[0] || ''
+    displayErrors.email = formattedError.email?._errors[0] || ''
+    displayErrors.message = formattedError.message?._errors[0] || ''
+    displayErrors.phone = formattedError.phone?._errors[0] || ''
+
+    toast.showToast('Please fix the errors.', 'error')
+    return
+  }
+
+  console.log('Form submitted:', result.data)
+  postData(result.data)
+  clearForm()
+  toast.showToast('Your message was sent successfully!', 'success')
+}
+
+const clearForm = () => {
+  Object.keys(form).forEach((key) => {
+    form[key] = ''
+  })
+
+  // Reset field states
+  Object.keys(fieldStates).forEach((key) => {
+    fieldStates[key].touched = false
+    fieldStates[key].focused = false
+  })
+
+  // Clear errors
+  Object.keys(displayErrors).forEach((key) => {
+    displayErrors[key] = ''
+  })
+}
+
 const postData = async (formData) => {
   try {
     const res = await fetch('/api/form/data', {
@@ -97,9 +161,9 @@ const postData = async (formData) => {
       body: JSON.stringify(formData),
     })
     const result = await res.json()
-    console.log('This is the result received from the server', result)
+    console.log('Server response:', result)
   } catch (error) {
-    console.log('Submission error =>', error)
+    console.error('Submission error:', error)
     toast.showToast('Submission failed. Try again later.', 'error')
   }
 }
@@ -108,42 +172,27 @@ const selectedFiles = ref([])
 
 const handleFileChange = (event) => {
   const files = Array.from(event.target.files)
-
-  // Combine old and new, limit to 5, and filter duplicates by name
   const combined = [...selectedFiles.value, ...files]
   const unique = Array.from(new Map(combined.map((f) => [f.name, f])).values())
   selectedFiles.value = unique.slice(0, 5)
 
-  // Optional: Show toast or warning if limit exceeded
   if (combined.length > 5) {
     toast.showToast('You can only upload up to 5 images.', 'error')
   }
 
-  // Reset the input value to allow re-selecting the same file again
   event.target.value = ''
 }
-
-// validate form on submission. If it doesnt conform return errors visually and notify
-// after validation send to backend
-// on backend validate again
-// email to designated email
 </script>
+
 <template>
-  <form
-    action="#"
-    method="POST"
-    class="from-sec/80 to-sec rounded-x dark:border-brdr z-10 flex w-full flex-1 items-center justify-center rounded-t bg-linear-to-br px-4 pt-8 pb-24 sm:px-8 md:px-10 lg:rounded-t-none lg:rounded-b lg:pb-8 dark:border dark:border-t-0"
-  >
-    <div class="h-full w-full lg:max-w-lg">
-      <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2">
-        <div>
-          <div class="flex items-baseline">
-            <label
-              for="first-name"
-              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
-              >First name</label
-            >
-            <span class="mx-2 text-xl text-red-500 dark:text-red-400">*</span>
+  <form action="#" method="POST" class="p-8">
+    <div class="space-y-8">
+      <!-- Name Row -->
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="group">
+          <div class="mb-2 flex items-baseline">
+            <label for="first-name" class="font-sec text-fg font-medium">First name</label>
+            <span class="ml-1 text-red-500">*</span>
           </div>
           <div class="relative">
             <input
@@ -152,27 +201,27 @@ const handleFileChange = (event) => {
               id="first-name"
               maxlength="50"
               autocomplete="given-name"
-              class="input"
+              class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+              placeholder="Enter your first name"
               v-model="form.firstName"
+              @focus="handleFocus('firstName')"
+              @blur="handleBlur('firstName')"
             />
             <Transition>
               <div
-                v-if="displayErrors.firstName"
-                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 tracking-normal text-pretty text-red-400 sm:text-sm"
+                v-if="displayErrors.firstName && fieldStates.firstName.touched"
+                class="absolute mt-1 text-sm text-red-500 dark:text-red-400"
               >
                 {{ displayErrors.firstName }}
               </div>
             </Transition>
           </div>
         </div>
-        <div>
-          <div class="flex items-baseline">
-            <label
-              for="last-name"
-              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
-              >Last name</label
-            >
-            <span class="mx-2 text-xl text-red-500">*</span>
+
+        <div class="group">
+          <div class="mb-2 flex items-baseline">
+            <label for="last-name" class="font-sec text-fg font-medium">Last name</label>
+            <span class="ml-1 text-red-500">*</span>
           </div>
           <div class="relative">
             <input
@@ -181,141 +230,195 @@ const handleFileChange = (event) => {
               id="last-name"
               maxlength="50"
               autocomplete="family-name"
-              class="input"
+              class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+              placeholder="Enter your last name"
               v-model="form.lastName"
+              @focus="handleFocus('lastName')"
+              @blur="handleBlur('lastName')"
             />
             <Transition>
               <div
-                v-if="displayErrors.lastName"
-                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
+                v-if="displayErrors.lastName && fieldStates.lastName.touched"
+                class="absolute mt-1 text-sm text-red-500 dark:text-red-400"
               >
                 {{ displayErrors.lastName }}
               </div>
             </Transition>
           </div>
         </div>
-        <div class="sm:col-span-2">
-          <div class="flex items-baseline">
-            <label
-              for="email"
-              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
-              >Email</label
-            >
-            <span class="mx-2 text-xl text-red-500">*</span>
-          </div>
-          <div class="relative">
-            <input
-              type="email"
-              name="email"
-              id="email"
-              maxlength="254"
-              autocomplete="email"
-              class="input"
-              v-model="form.email"
-            />
-            <Transition>
-              <div
-                v-if="displayErrors.email"
-                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
-              >
-                {{ displayErrors.email }}
-              </div>
-            </Transition>
-          </div>
-        </div>
-        <div class="sm:col-span-2">
-          <label
-            for="phone-number"
-            class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
-            >Phone number</label
-          >
-          <div class="relative">
-            <input
-              type="tel"
-              name="phone-number"
-              id="phone-number"
-              maxlength="25"
-              autocomplete="tel"
-              class="input"
-              v-model="form.phone"
-            />
-            <Transition>
-              <div
-                v-if="displayErrors.phone"
-                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 -tracking-normal text-pretty text-red-400 sm:text-sm"
-              >
-                {{ displayErrors.phone }}
-              </div>
-            </Transition>
-          </div>
-        </div>
-        <div class="sm:col-span-2">
-          <div class="flex items-center justify-between">
-            <p class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide">
-              Images
-            </p>
-            <label for="file-upload" class="btn p-1"> Choose images </label>
-          </div>
-          <input
-            type="file"
-            name="images"
-            accept="image/jpeg,image/png,image/webp"
-            multiple
-            class="hidden"
-            id="file-upload"
-            @change="handleFileChange"
-          />
+      </div>
 
-          <div class="mt-4 flex flex-wrap gap-2">
-            <div
-              v-for="(file, index) in selectedFiles"
-              :key="index"
-              class="bg-bg2 dark:bg-bg3 border-fg2 dark:border-fg text-fg2 dark:text-fg max-w-1/2 rounded-lg border px-3 py-2 text-xs shadow-sm"
-            >
-              {{ file.name }}
-            </div>
-          </div>
+      <!-- Email -->
+      <div class="group">
+        <div class="mb-2 flex items-baseline">
+          <label for="email" class="font-sec text-fg font-medium">Email address</label>
+          <span class="ml-1 text-red-500">*</span>
         </div>
-        <div class="sm:col-span-2">
-          <div class="flex items-baseline">
-            <label
-              for="message"
-              class="font-sec text-fg2 dark:text-fg block text-sm font-medium tracking-wide"
-              >Message
-            </label>
-            <span class="mx-2 text-xl text-red-500">*</span>
-          </div>
-          <div class="relative">
-            <textarea
-              name="message"
-              id="message"
-              maxlength="1000"
-              v-model="form.message"
-              rows="4"
-              class="input"
-            />
-            <Transition>
-              <div
-                v-if="displayErrors.message"
-                class="absolute mt-0.5 line-clamp-2 flex px-0.5 text-xs leading-3.5 tracking-normal text-pretty text-red-400 sm:text-sm dark:text-red-400"
-              >
-                {{ displayErrors.message }}
-              </div>
-            </Transition>
-          </div>
+        <div class="relative">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            maxlength="254"
+            autocomplete="email"
+            class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+            placeholder="your.email@example.com"
+            v-model="form.email"
+            @focus="handleFocus('email')"
+            @blur="handleBlur('email')"
+          />
+          <Transition>
+            <div
+              v-if="displayErrors.email && fieldStates.email.touched"
+              class="absolute mt-1 text-sm text-red-500 dark:text-red-400"
+            >
+              {{ displayErrors.email }}
+            </div>
+          </Transition>
         </div>
       </div>
-      <div class="mt-8 block space-y-4 text-center sm:flex sm:justify-between">
-        <p class="text-fg2 dark:text-fg text-sm">
-          Fields marked with
-          <span class="mx-0.5 text-red-500 sm:mx-2 sm:text-xl dark:text-red-400">*</span> are
-          mandatory
+
+      <!-- Phone -->
+      <div class="group">
+        <label for="phone-number" class="font-sec text-fg mb-2 block font-medium"
+          >Phone number</label
+        >
+        <div class="relative">
+          <input
+            type="tel"
+            name="phone-number"
+            id="phone-number"
+            maxlength="25"
+            autocomplete="tel"
+            class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+            placeholder="+44 123 456 7890"
+            v-model="form.phone"
+            @focus="handleFocus('phone')"
+            @blur="handleBlur('phone')"
+          />
+          <Transition>
+            <div
+              v-if="displayErrors.phone && fieldStates.phone.touched"
+              class="absolute mt-1 text-sm text-red-500 dark:text-red-400"
+            >
+              {{ displayErrors.phone }}
+            </div>
+          </Transition>
+        </div>
+      </div>
+
+      <!-- File Upload -->
+      <div class="group">
+        <div class="mb-4 flex items-center justify-between">
+          <label class="font-sec text-fg font-medium">Watch Images (Optional)</label>
+          <label
+            for="file-upload"
+            class="bg-acc/10 text-acc hover:bg-acc/20 inline-flex cursor-pointer items-center rounded-lg px-4 py-2 font-medium transition-colors"
+          >
+            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            Choose Images
+          </label>
+        </div>
+
+        <input
+          type="file"
+          name="images"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          class="hidden"
+          id="file-upload"
+          @change="handleFileChange"
+        />
+
+        <div v-if="selectedFiles.length > 0" class="grid grid-cols-2 gap-3">
+          <div
+            v-for="(file, index) in selectedFiles"
+            :key="index"
+            class="bg-acc/5 border-acc/20 flex items-center rounded-lg border p-3"
+          >
+            <svg
+              class="text-acc mr-3 h-5 w-5 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"
+              ></path>
+            </svg>
+            <span class="text-fg truncate text-sm">{{ file.name }}</span>
+          </div>
+        </div>
+
+        <p class="text-fg/60 mt-2 text-sm">Upload up to 5 images of your watch (JPEG, PNG, WebP)</p>
+      </div>
+
+      <!-- Message -->
+      <div class="group">
+        <div class="mb-2 flex items-baseline">
+          <label for="message" class="font-sec text-fg font-medium">Message</label>
+          <span class="ml-1 text-red-500">*</span>
+        </div>
+        <div class="relative">
+          <textarea
+            name="message"
+            id="message"
+            maxlength="1000"
+            rows="6"
+            class="text-fg placeholder-fg/50 focus:ring-acc/50 focus:border-acc w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none dark:border-slate-600 dark:bg-slate-700"
+            placeholder="Tell me about your watch, what issues you're experiencing, or any specific requirements..."
+            v-model="form.message"
+            @focus="handleFocus('message')"
+            @blur="handleBlur('message')"
+          />
+          <Transition>
+            <div
+              v-if="displayErrors.message && fieldStates.message.touched"
+              class="absolute mt-1 text-sm text-red-500 dark:text-red-400"
+            >
+              {{ displayErrors.message }}
+            </div>
+          </Transition>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Footer -->
+    <div class="border-brdr/10 mt-8 border-t pt-6">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-fg/70 text-sm">
+          Fields marked with <span class="text-red-500">*</span> are required
         </p>
-        <button type="submit" @click.prevent="onSubmit()" class="btn">Send message</button>
+        <button
+          type="submit"
+          @click.prevent="onSubmit()"
+          class="from-acc to-acc/80 hover:from-acc/90 hover:to-acc/70 focus:ring-acc/50 inline-flex transform items-center rounded-xl bg-gradient-to-r px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] focus:ring-2 focus:outline-none"
+        >
+          <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            ></path>
+          </svg>
+          Send Message
+        </button>
       </div>
     </div>
   </form>
 </template>
+
 <style scoped>
 .v-enter-active,
 .v-leave-active {

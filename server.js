@@ -3,10 +3,13 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import sanitizeHtml from 'sanitize-html'
 import * as z from 'zod'
+import { db, initializeDatabase } from './database.js'
+import process from 'process'
+
 const app = express()
 
 // Trust the proxy if behind one (important for correct IP detection)
-app.set('trust proxy', 1) // or true
+app.set('trust proxy', 1)
 
 // Security headers
 app.use(helmet())
@@ -94,11 +97,20 @@ app.post('/api/form/data', formLimiter, (req, res) => {
   console.log('Sanitized and validated form data: ', result.data)
   res.status(200).json({ message: 'Form received', data: result.data })
 })
-
+initializeDatabase()
 // Server start
 const PORT = 5000
 app.listen(PORT, () => {
   console.log(`-----------------------------`)
   console.log(`Backend running on port ${PORT}`)
   console.log(`-----------------------------`)
+})
+process.on('SIGINT', () => {
+  db.close()
+  process.exit(0)
+})
+
+process.on('SIGTERM', () => {
+  db.close()
+  process.exit(0)
 })
