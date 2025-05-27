@@ -103,7 +103,7 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
               <div class="pt-4">
                 <button
                   @click="goToRoute('repairs')"
-                  class="group bg-acc hover:bg-acc/90 text-fg2 relative overflow-hidden rounded-xl px-8 py-4 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                  class="group bg-acc hover:bg-acc/90 text-fg2 relative overflow-hidden rounded-xl px-8 py-4 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg dark:hover:text-white"
                 >
                   <span class="relative z-10">Start Your Restoration</span>
                   <div

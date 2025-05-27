@@ -60,12 +60,19 @@ onUnmounted(() => {
   <nav
     :class="[
       'border-brdr/20 bg-primary/80 fixed top-5 left-1/2 z-[500] hidden w-lg -translate-x-1/2 items-center justify-between rounded-xl border p-3 shadow-lg backdrop-blur-md transition-all duration-300 ease-in-out sm:flex',
-      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-20 opacity-0',
+      isVisible ? 'translate-y-0 opacity-95' : '-translate-y-20 opacity-0',
     ]"
   >
     <div class="flex gap-8">
       <RouterLink to="/" class="group relative">
-        <button class="group hover:bg-sec/10 rounded-lg p-2 transition-colors duration-200">
+        <button
+          class="group hover:bg-sec/10 dark:hover:bg-sec/50 cursor-pointer rounded-lg p-2 transition-colors duration-200"
+        >
+          <!-- Active Indicator -->
+          <div
+            v-if="$route.path === '/'"
+            class="bg-acc absolute top-0 -right-0.5 h-2 w-2 animate-pulse rounded-full"
+          ></div>
           <HomeIcon class="text-fg group-hover:text-acc size-5 transition-colors duration-200" />
         </button>
         <!-- Tooltip -->
@@ -80,7 +87,14 @@ onUnmounted(() => {
       </RouterLink>
 
       <RouterLink to="/repairs" class="group relative">
-        <button class="group hover:bg-sec/10 rounded-lg p-2 transition-colors duration-200">
+        <button
+          class="group hover:bg-sec/10 dark:hover:bg-sec/50 cursor-pointer rounded-lg p-2 transition-colors duration-200"
+        >
+          <!-- Active Indicator -->
+          <div
+            v-if="$route.path === '/repairs'"
+            class="bg-acc absolute top-0 -right-0.5 h-2 w-2 animate-pulse rounded-full"
+          ></div>
           <ChatBubbleBottomCenterTextIcon
             class="text-fg group-hover:text-acc size-5 transition-colors duration-200"
           />
@@ -97,7 +111,14 @@ onUnmounted(() => {
       </RouterLink>
 
       <RouterLink to="/my-work" class="group relative">
-        <button class="group hover:bg-sec/10 rounded-lg p-2 transition-colors duration-200">
+        <button
+          class="group hover:bg-sec/10 dark:hover:bg-sec/50 cursor-pointer rounded-lg p-2 transition-colors duration-200"
+        >
+          <!-- Active Indicator -->
+          <div
+            v-if="$route.path === '/my-work'"
+            class="bg-acc absolute top-0 -right-0.5 h-2 w-2 animate-pulse rounded-full"
+          ></div>
           <PhotoIcon class="text-fg group-hover:text-acc size-5 transition-colors duration-200" />
         </button>
         <!-- Tooltip -->
