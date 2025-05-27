@@ -11,13 +11,20 @@ import { usePostType } from '@/composables/utils'
 // Historic posts filled from DB
 const posts = ref([])
 
-// Empty object to use when creating new post
+// Empty object to use when creating new post (for preview only now)
 const newPost = ref({
   title: '',
   bodyText: '',
   titleImage: [],
   extraImages: [],
 })
+
+// Store actual files separately for FormData
+const titleFile = ref(null)
+const extraFiles = ref([])
+
+// Loading state to prevent multiple submissions
+const isUploading = ref(false)
 
 // Computes the post type(see return sig)
 const postType = usePostType(newPost)
@@ -26,51 +33,151 @@ const postType = usePostType(newPost)
 const titleFileInputRef = ref(null)
 const extraFileInputRef = ref(null)
 
-function insertNew() {
-  if (
-    newPost.value.title.trim() === '' &&
-    newPost.value.bodyText.trim() === '' &&
-    newPost.value.titleImage.length === 0 &&
-    newPost.value.extraImages.length === 0
-  ) {
-    toast.showToast('Сложи поне една снимка бе _)_', 'warning')
-    console.warn('Cannot create an empty post')
+// Image compression function with better quality
+function compressImage(file, maxWidth = 1200, quality = 0.85) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+
+    img.onload = () => {
+      // Calculate new dimensions
+      let { width, height } = img
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width
+        width = maxWidth
+      }
+
+      // Set canvas size and draw compressed image
+      canvas.width = width
+      canvas.height = height
+      ctx.drawImage(img, 0, 0, width, height)
+
+      // Determine output format based on original file type
+      let outputType = 'image/jpeg'
+      if (file.type === 'image/png') outputType = 'image/png'
+      if (file.type === 'image/webp') outputType = 'image/webp'
+
+      // Convert back to blob with original filename info
+      canvas.toBlob(
+        (blob) => {
+          // Add filename property to blob for better handling
+          blob.name = file.name
+          blob.lastModified = file.lastModified
+          resolve(blob)
+        },
+        outputType,
+        quality,
+      )
+    }
+
+    img.src = URL.createObjectURL(file)
+  })
+}
+
+// Validation function
+function validatePost() {
+  const errors = []
+
+  if (!newPost.value.title.trim()) {
+    errors.push('Title is required')
+  }
+
+  if (!titleFile.value && extraFiles.value.length === 0) {
+    errors.push('At least one image is required')
+  }
+
+  if (extraFiles.value.length > 5) {
+    errors.push('Maximum 5 extra images allowed')
+  }
+
+  return errors
+}
+
+async function saveNewPost() {
+  if (isUploading.value) return
+
+  // Validate post
+  const errors = validatePost()
+  if (errors.length > 0) {
+    toast.showToast(errors[0], 'warning')
+    console.warn('Validation errors:', errors)
     return
   }
-  if (
-    newPost.value.title.trim() === '' &&
-    newPost.value.bodyText.trim() === '' &&
-    newPost.value.titleImage.length === 0 &&
-    newPost.value.extraImages.length > 0
-  ) {
-    toast.showToast('Missing title image!', 'warning')
-    return
-  }
-  const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY')
-  const date = formatedCurrentDate.value
 
-  const post = {
-    postId: 1, // DO NOT IGNORE ME!!! ----- NEED TO EDIT THIS ----- DO NOT IGNORE ME!!!
-    title: newPost.value.title,
-    bodyText: newPost.value.bodyText,
-    titleImage: newPost.value.titleImage[0],
-    extraImages: [...newPost.value.extraImages],
-    date: date,
-    type: postType.value,
-  }
-  posts.value.push(post)
+  isUploading.value = true
 
-  // Reset form
+  try {
+    const formatedCurrentDate = useDateFormat(useNow(), 'DD-MM-YYYY')
+    const date = formatedCurrentDate.value
+
+    // Create FormData
+    const formData = new FormData()
+    formData.append('title', newPost.value.title)
+    formData.append('bodyText', newPost.value.bodyText)
+    formData.append('date', date)
+    formData.append('type', postType.value)
+
+    // Add files
+    if (titleFile.value) {
+      formData.append('titleImage', titleFile.value)
+    }
+
+    extraFiles.value.forEach((file) => {
+      formData.append('extraImages', file)
+    })
+
+    const success = await sendNewPost(formData)
+
+    // Only reset form if upload was successful
+    if (success) {
+      resetForm()
+      toast.showToast('Post created successfully!', 'success')
+    }
+  } catch (error) {
+    console.error('Error saving post:', error)
+    toast.showToast('Failed to save post', 'error')
+  } finally {
+    isUploading.value = false
+  }
+}
+
+async function sendNewPost(formData) {
+  try {
+    const response = await fetch('/api/posts/new-post', {
+      method: 'POST',
+      body: formData,
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.error || `Server error: ${response.status}`)
+    }
+
+    console.log('Server response:', result)
+    return true
+  } catch (error) {
+    console.error('Network error:', error)
+    toast.showToast(error.message, 'error')
+    return false
+  }
+}
+
+// Reset form function
+function resetForm() {
   newPost.value = {
     title: '',
     bodyText: '',
     titleImage: [],
     extraImages: [],
-    date: '',
   }
+  titleFile.value = null
+  extraFiles.value = []
 
-  console.log('Post created:', post)
-  toast.showToast('Post created!', 'success')
+  // Reset file inputs
+  if (titleFileInputRef.value) titleFileInputRef.value.value = ''
+  if (extraFileInputRef.value) extraFileInputRef.value.value = ''
 }
 
 const titleDropZoneRef = ref(null)
@@ -78,14 +185,27 @@ const extraImageDropZoneRef = ref(null)
 
 // Title Image Drop
 const { isOverDropZone } = useDropZone(titleDropZoneRef, {
-  onDrop(event) {
+  async onDrop(event) {
     const file = Array.from(event)[0]
     if (!file || !file.type.startsWith('image/')) return
+
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      toast.showToast('Only JPEG, PNG, and WebP images are allowed', 'warning')
+      return
+    }
+
+    // Compress the file
+    const compressedFile = await compressImage(file)
+    titleFile.value = compressedFile
+
+    // Create preview
     const reader = new FileReader()
     reader.onload = (e) => {
       newPost.value.titleImage = [e.target.result]
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(compressedFile)
   },
   dataTypes: ['image/jpeg', 'image/png', 'image/webp'],
   multiple: false,
@@ -93,15 +213,36 @@ const { isOverDropZone } = useDropZone(titleDropZoneRef, {
 
 // Extra Images Drop
 const { isOverDropZone: isOverExtraDropZone } = useDropZone(extraImageDropZoneRef, {
-  onDrop(event) {
-    Array.from(event).forEach((file) => {
-      if (!file || !file.type.startsWith('image/')) return
+  async onDrop(event) {
+    const files = Array.from(event)
+
+    // Check total count
+    if (extraFiles.value.length + files.length > 5) {
+      toast.showToast('Maximum 5 extra images allowed', 'warning')
+      return
+    }
+
+    for (const file of files) {
+      if (!file || !file.type.startsWith('image/')) continue
+
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        toast.showToast('Only JPEG, PNG, and WebP images are allowed', 'warning')
+        continue
+      }
+
+      // Compress each file
+      const compressedFile = await compressImage(file)
+      extraFiles.value.push(compressedFile)
+
+      // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
         newPost.value.extraImages.push(e.target.result)
       }
-      reader.readAsDataURL(file)
-    })
+      reader.readAsDataURL(compressedFile)
+    }
   },
   dataTypes: ['image/jpeg', 'image/png', 'image/webp'],
   multiple: true,
@@ -113,37 +254,79 @@ function triggerTitleUpload() {
 }
 
 function triggerExtraUpload() {
+  if (extraFiles.value.length >= 5) {
+    toast.showToast('Maximum 5 extra images allowed', 'warning')
+    return
+  }
   extraFileInputRef.value?.click()
 }
 
 // File Upload Fallbacks
-function insertNewTitleImage(event) {
+async function insertNewTitleImage(event) {
   const file = event.target.files?.[0]
   if (!file) return
+
+  // Check file type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+  if (!allowedTypes.includes(file.type)) {
+    toast.showToast('Only JPEG, PNG, and WebP images are allowed', 'warning')
+    return
+  }
+
+  // Compress the file
+  const compressedFile = await compressImage(file)
+  titleFile.value = compressedFile
+
+  // Create preview
   const reader = new FileReader()
   reader.onload = (e) => {
     newPost.value.titleImage = [e.target.result]
   }
-  reader.readAsDataURL(file)
+  reader.readAsDataURL(compressedFile)
 }
 
-function handleFileChange(event) {
-  Array.from(event.target.files || []).forEach((file) => {
+async function handleFileChange(event) {
+  const files = Array.from(event.target.files || [])
+
+  // Check total count
+  if (extraFiles.value.length + files.length > 5) {
+    toast.showToast('Maximum 5 extra images allowed', 'warning')
+    return
+  }
+
+  for (const file of files) {
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      toast.showToast('Only JPEG, PNG, and WebP images are allowed', 'warning')
+      continue
+    }
+
+    // Compress each file
+    const compressedFile = await compressImage(file)
+    extraFiles.value.push(compressedFile)
+
+    // Create preview
     const reader = new FileReader()
     reader.onload = (e) => {
       newPost.value.extraImages.push(e.target.result)
     }
-    reader.readAsDataURL(file)
-  })
+    reader.readAsDataURL(compressedFile)
+  }
+
+  // Clear input for next selection
+  event.target.value = ''
 }
 
 // Remove image functions
 function removeTitleImage() {
   newPost.value.titleImage = []
+  titleFile.value = null
 }
 
 function removeExtraImage(index) {
   newPost.value.extraImages.splice(index, 1)
+  extraFiles.value.splice(index, 1)
 }
 </script>
 
@@ -164,7 +347,6 @@ function removeExtraImage(index) {
         );
       "
     ></div>
-
     <div class="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-12 text-center">
@@ -175,7 +357,8 @@ function removeExtraImage(index) {
       </div>
 
       <!-- CREATE NEW POST SECTION -->
-      <section class="mx-auto mb-16 max-w-6xl">
+
+      <form class="mx-auto mb-16 max-w-6xl" enctype="multipart/form-data">
         <div
           class="overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/90"
         >
@@ -298,6 +481,7 @@ function removeExtraImage(index) {
                 <input
                   ref="titleFileInputRef"
                   type="file"
+                  name="title_image_file"
                   accept="image/jpeg,image/png,image/webp"
                   class="hidden"
                   @change="insertNewTitleImage"
@@ -401,6 +585,7 @@ function removeExtraImage(index) {
                 <input
                   ref="extraFileInputRef"
                   type="file"
+                  name="extra_images_file"
                   accept="image/jpeg,image/png,image/webp"
                   multiple
                   class="hidden"
@@ -455,8 +640,10 @@ function removeExtraImage(index) {
             <!-- Action Button -->
             <div class="flex justify-center pt-8">
               <button
-                @click="insertNew"
+                @click.prevent="saveNewPost"
+                :disabled="isUploading"
                 class="from-acc to-acc/80 hover:from-acc/90 hover:to-acc/70 focus:ring-acc/50 inline-flex transform items-center rounded-xl bg-gradient-to-r px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] focus:ring-2 focus:outline-none"
+                :class="{ 'cursor-not-allowed opacity-50': isUploading }"
               >
                 <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -466,12 +653,12 @@ function removeExtraImage(index) {
                     d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                   ></path>
                 </svg>
-                Publish Post
+                {{ isUploading ? 'Creating Post...' : 'Publish Post' }}
               </button>
             </div>
           </div>
         </div>
-      </section>
+      </form>
 
       <!-- GALLERY SECTION -->
       <section class="mx-auto max-w-7xl">

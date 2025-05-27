@@ -29,5 +29,4 @@ export function initializeDatabase() {
       FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE)`
   )
   stmtImagesTable.run()
-
 }

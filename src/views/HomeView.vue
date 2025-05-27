@@ -18,7 +18,7 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
   <main class="flex flex-col items-center">
     <!-- TOP SECTION -->
     <section
-      class="md:border-brdr/50 grad-container mb-12 grid grid-cols-1 items-center p-12 drop-shadow-xl md:mx-6 md:my-8 md:w-fit md:grid-cols-3 md:rounded md:border md:py-6 lg:gap-24"
+      class="md:border-brdr/20 grad-container mb-12 grid grid-cols-1 items-center p-12 drop-shadow-xl md:mx-6 md:my-8 md:w-fit md:grid-cols-3 md:rounded md:border md:py-6 lg:gap-24"
     >
       <!-- Left brands - hidden on mobile -->
       <div class="text-fg/80 hidden grid-rows-3 place-items-center gap-6 md:grid">
@@ -30,7 +30,7 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
       <!-- Center title + logo -->
       <div class="text-fg flex flex-col items-center gap-12 lg:gap-24">
         <h1
-          class="font-sec text-fg md:4xl text-center text-2xl font-semibold tracking-wide text-nowrap sm:text-3xl"
+          class="font-sec text-fg mb-4 text-center text-4xl font-semibold sm:text-nowrap lg:text-5xl"
         >
           Veselin Hadzhiyski
         </h1>
