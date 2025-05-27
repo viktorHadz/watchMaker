@@ -17,7 +17,7 @@ const toggleMode = () => {
 </script>
 
 <template>
-  <button @click="toggleMode" class="cursor-pointer">
+  <button @click="toggleMode" class="theme-toggle-btn cursor-pointer">
     <transition name="rotate-element" mode="out-in">
       <div :key="mode" class="icon-wrapper">
         <component :is="mode === 'dark' ? SunIcon : MoonIcon" class="size-6 stroke-1" />
@@ -27,8 +27,18 @@ const toggleMode = () => {
 </template>
 
 <style scoped>
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .icon-wrapper {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rotate-element-enter-active,

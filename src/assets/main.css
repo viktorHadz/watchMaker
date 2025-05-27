@@ -21,6 +21,7 @@
   --color-primary: oklch(98.7% 0.022 95.277);
   --color-sec: oklch(0.3325 0.0321 233.09);
   --color-sec-mute: oklch(0.4763 0.0291 229.74);
+  /* --color-sec-mute: oklch(0.6971 0.0752 222.35); */
   --color-acc: oklch(0.7407 0.1367 42.71);
 
   --color-bordr: oklch(0.708 0 0);
@@ -38,7 +39,7 @@
   --color-acc: oklch(0.74 0.1373 42.52);
 
   --color-bordr: oklch(0.3 0 0);
-  --color-font: oklch(0.708 0 0);
+  --color-font: oklch(0.808 0 0);
   --color-font2: oklch(0.808 0 0);
 
   --color-danger: oklch(0.637 0.237 25.331);

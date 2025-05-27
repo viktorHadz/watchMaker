@@ -17,49 +17,166 @@ import VostokLogo from '@/components/brands/VostokLogo.vue'
 <template>
   <main class="flex flex-col items-center">
     <!-- TOP SECTION -->
-    <section
-      class="md:border-brdr/20 grad-container mb-12 grid grid-cols-1 items-center p-12 drop-shadow-xl md:mx-6 md:my-8 md:w-fit md:grid-cols-3 md:rounded md:border md:py-6 lg:gap-24"
-    >
-      <!-- Left brands - hidden on mobile -->
-      <div class="text-fg/80 hidden grid-rows-3 place-items-center gap-6 md:grid">
-        <OmegaLogo class="size-14 transition-transform duration-200 hover:scale-110" />
-        <CasioLogo class="size-14 transition-transform duration-200 hover:scale-110" />
-        <LonginesLogo class="size-16 transition-transform duration-200 hover:scale-110" />
-      </div>
-
-      <!-- Center title + logo -->
-      <div class="text-fg flex flex-col items-center gap-12 lg:gap-24">
-        <h1
-          class="font-sec text-fg mb-4 text-center text-4xl font-semibold sm:text-nowrap lg:text-5xl"
+    <section class="relative flex min-h-[85vh] items-center justify-center px-6 py-12">
+      <!-- Glass morphism container -->
+      <div class="relative w-full max-w-6xl">
+        <!-- Main hero card -->
+        <div
+          class="bg-primary/60 border-brdr/20 relative overflow-hidden rounded-3xl border shadow-2xl backdrop-blur-xl"
         >
-          Veselin Hadzhiyski
-        </h1>
-        <TheLogo />
-        <h1
-          class="font-sec md:4xl text-center text-2xl font-semibold tracking-wide text-nowrap sm:text-3xl"
-        >
-          Watchmaker & Repairs
-        </h1>
-      </div>
+          <!-- Subtle inner glow -->
+          <div
+            class="from-acc/5 to-sec/5 absolute inset-0 rounded-3xl bg-gradient-to-br via-transparent"
+          ></div>
 
-      <!-- Right brands - hidden on mobile -->
-      <div class="text-fg/80 hidden grid-rows-3 place-items-center gap-6 md:grid">
-        <RolexLogo class="size-14 transition-transform duration-200 hover:scale-110" />
-        <SeikoLogo class="size-14 transition-transform duration-200 hover:scale-110" />
-        <VostokLogo class="size-14 transition-transform duration-200 hover:scale-110" />
+          <!-- Content grid -->
+          <div class="relative z-10 grid grid-cols-1 items-center gap-8 p-8 lg:grid-cols-5 lg:p-12">
+            <!-- Left brand column - enhanced -->
+            <div class="hidden lg:col-span-1 lg:block">
+              <div class="flex flex-col items-center space-y-8">
+                <div class="group">
+                  <OmegaLogo
+                    class="text-fg/60 hover:text-acc size-12 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                  <div
+                    class="via-brdr/30 mt-4 h-px w-full bg-gradient-to-r from-transparent to-transparent"
+                  ></div>
+                </div>
+                <div class="group">
+                  <CasioLogo
+                    class="text-fg/60 hover:text-acc size-12 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                  <div
+                    class="via-brdr/30 mt-4 h-px w-full bg-gradient-to-r from-transparent to-transparent"
+                  ></div>
+                </div>
+                <div class="group">
+                  <LonginesLogo
+                    class="text-fg/60 hover:text-acc size-14 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Center content - redesigned -->
+            <div class="space-y-8 text-center lg:col-span-3">
+              <!-- Main title with elegant styling -->
+              <div class="space-y-4">
+                <h1
+                  class="font-sec text-fg text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl"
+                >
+                  Veselin Hadzhiyski
+                </h1>
+                <div class="flex items-center justify-center space-x-4">
+                  <div class="to-acc h-px w-12 bg-gradient-to-r from-transparent"></div>
+                  <div class="bg-acc h-2 w-2 animate-pulse rounded-full"></div>
+                  <div class="to-acc h-px w-12 bg-gradient-to-l from-transparent"></div>
+                </div>
+              </div>
+
+              <!-- Logo with elegant frame -->
+              <div class="flex justify-center">
+                <div class="group relative">
+                  <div
+                    class="from-acc/20 to-sec/20 absolute inset-0 rounded-full bg-gradient-to-br opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"
+                  ></div>
+                  <div
+                    class="bg-primary/80 border-brdr/30 relative rounded-full border p-6 shadow-lg backdrop-blur-sm"
+                  >
+                    <TheLogo class="transition-transform duration-300 group-hover:scale-105" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subtitle with refined typography -->
+              <div class="space-y-2">
+                <h2 class="font-sec text-fg text-2xl font-medium tracking-wide md:text-3xl">
+                  Watchmaker & Repairs
+                </h2>
+                <p class="text-fg/70 mx-auto max-w-2xl text-lg leading-relaxed">
+                  Precision craftsmanship meets timeless tradition in the art of horological
+                  restoration
+                </p>
+              </div>
+
+              <!-- Call to action -->
+              <div class="pt-4">
+                <button
+                  @click="goToRoute('repairs')"
+                  class="group bg-acc hover:bg-acc/90 text-fg2 relative overflow-hidden rounded-xl px-8 py-4 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                >
+                  <span class="relative z-10">Start Your Restoration</span>
+                  <div
+                    class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                  ></div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right brand column - enhanced -->
+            <div class="hidden lg:col-span-1 lg:block">
+              <div class="flex flex-col items-center space-y-8">
+                <div class="group">
+                  <RolexLogo
+                    class="text-fg/60 hover:text-acc size-12 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                  <div
+                    class="via-brdr/30 mt-4 h-px w-full bg-gradient-to-r from-transparent to-transparent"
+                  ></div>
+                </div>
+                <div class="group">
+                  <SeikoLogo
+                    class="text-fg/60 hover:text-acc size-12 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                  <div
+                    class="via-brdr/30 mt-4 h-px w-full bg-gradient-to-r from-transparent to-transparent"
+                  ></div>
+                </div>
+                <div class="group">
+                  <VostokLogo
+                    class="text-fg/60 hover:text-acc size-12 cursor-pointer transition-all duration-300 hover:scale-110"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile brand showcase -->
+          <div class="border-brdr/20 border-t p-6 lg:hidden">
+            <div class="flex items-center justify-center space-x-8 opacity-60">
+              <OmegaLogo class="hover:text-acc size-8 transition-colors duration-300" />
+              <CasioLogo class="hover:text-acc size-8 transition-colors duration-300" />
+              <LonginesLogo class="hover:text-acc size-9 transition-colors duration-300" />
+              <RolexLogo class="hover:text-acc size-8 transition-colors duration-300" />
+              <SeikoLogo class="hover:text-acc size-8 transition-colors duration-300" />
+              <VostokLogo class="hover:text-acc size-8 transition-colors duration-300" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating quote card -->
+        <div class="relative mx-auto mt-12 max-w-2xl">
+          <div
+            class="bg-primary/40 border-brdr/20 rounded-2xl border p-8 shadow-xl backdrop-blur-lg"
+          >
+            <blockquote class="text-center">
+              <div class="relative">
+                <span class="text-acc/60 absolute -top-4 -left-2 font-serif text-6xl">"</span>
+                <p class="text-fg px-6 text-xl leading-relaxed font-light italic md:text-2xl">
+                  Time is the wisest counselor of all.
+                </p>
+                <span class="text-acc/60 absolute -right-2 -bottom-8 rotate-180 font-serif text-6xl"
+                  >"</span
+                >
+              </div>
+              <footer class="border-brdr/20 mt-6 border-t pt-4">
+                <cite class="text-fg/70 text-lg font-medium not-italic">— Pericles</cite>
+              </footer>
+            </blockquote>
+          </div>
+        </div>
       </div>
     </section>
-
-    <blockquote
-      class="text-fg relative max-w-md px-4 text-center text-2xl leading-relaxed tracking-tight italic sm:text-3xl"
-    >
-      <span class="text-acc/80 absolute top-0 left-0 text-5xl">" </span>
-      <p class="text-fg relative z-10 line-clamp-1">Time is the wisest counselor of all.</p>
-
-      <footer class="text-fg/80 flex items-center justify-center text-base/tight">
-        — Pericles
-      </footer>
-    </blockquote>
 
     <!-- SERVICES SECTION -->
     <section class="mt-16 w-full max-w-7xl px-6">

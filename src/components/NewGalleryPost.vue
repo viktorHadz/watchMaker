@@ -331,22 +331,7 @@ function removeExtraImage(index) {
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50/20 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-  >
-    <!-- Background Pattern -->
-    <div
-      class="absolute inset-0 opacity-20"
-      style="
-        background-image: repeating-linear-gradient(
-          45deg,
-          transparent,
-          transparent 20px,
-          rgb(245 158 11 / 0.1) 20px,
-          rgb(245 158 11 / 0.1) 40px
-        );
-      "
-    ></div>
+  <div class="min-h-screen">
     <div class="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-12 text-center">

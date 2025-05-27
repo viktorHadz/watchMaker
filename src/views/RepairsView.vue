@@ -1,22 +1,6 @@
 <!-- MAIN ENTRY FILE TEMPLATE -->
 <template>
-  <div
-    class="relative min-h-screen w-full bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-  >
-    <!-- Background Pattern -->
-    <div
-      class="absolute inset-0 opacity-20"
-      style="
-        background-image: repeating-linear-gradient(
-          45deg,
-          transparent,
-          transparent 20px,
-          rgb(245 158 11 / 0.1) 20px,
-          rgb(245 158 11 / 0.1) 40px
-        );
-      "
-    ></div>
-
+  <div class="relative min-h-screen w-full">
     <div class="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <!-- Header Section -->
       <div class="mb-16 text-center">
