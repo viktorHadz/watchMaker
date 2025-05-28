@@ -3,14 +3,14 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '../database.js'
 import path from 'path'
-import { fileURLToPath } from 'url'
+// import { fileURLToPath } from 'url'
 import fs from 'fs'
 
 const database = db
 const router = express.Router()
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// const __filename = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(__filename)
 
 function getNormalDate() {
   const date = new Date()
@@ -69,7 +69,7 @@ const upload = multer({
     files: 6 // Maximum 6 files total (1 title + 5 extra)
   },
   fileFilter: (req, file, cb) => {
-    // Accept only specific image types
+    // Accepts only specific image types
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
 
     if (allowedTypes.includes(file.mimetype)) {
@@ -79,6 +79,8 @@ const upload = multer({
     }
   }
 })
+
+
 
 // Creates new post for route /api/posts/new-post
 router.post('/new-post', (req, res) => {
@@ -159,9 +161,20 @@ router.post('/new-post', (req, res) => {
       }
 
       console.log('Post to save:', post)
+      // Gets all post IDs 
+      const stmtPostIds = database.prepare('SELECT post_id FROM posts ORDER BY post_id')
+      const getAllPostIds = database.transaction(() => {
+        stmtPostIds.run()
+      })
+      getAllPostIds()
+      console.log('Post IDS ', getAllPostIds()); // => undefined - then i need to make a new post number starting from 1
 
+      // to make  a new number you must have the existing number of the latest post 
+      // so one must start with 1 
+      // then procceed to get the post nubmer 
+      // insert it into a binding here and use to insert into posts 
       // TODO: Save to database
-      // const stmtPost = database.prepare('INSERT INTO posts ...')
+      // const stmtPost = database.prepare('INSERT INTO posts ')
       // database.run(stmtPost, ...)
 
       res.json({

@@ -133,8 +133,8 @@ onUnmounted(() => {
       </RouterLink>
     </div>
 
-    <div class="border-brdr/20 group relative ml-4 border-l pl-4">
-      <DarkMode />
+    <div class="border-brdr/20 dark:border-fg/20 group relative ml-4 border-l pl-4">
+      <DarkMode class="hover:text-acc transition duration-200" />
       <!-- Tooltip for Dark Mode -->
       <div
         class="pointer-events-none absolute -bottom-10 left-1/2 z-10 -translate-x-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
