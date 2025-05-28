@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import NavigationBar from './components/NavigationBar.vue'
+// import NavigationBar from './components/NavigationBar.vue'
 import ToastElement from './components/ToastElement.vue'
 import { useToastStore } from '@/stores/toast'
 import NavHorizontal from './components/NavHorizontal.vue'
@@ -9,7 +9,7 @@ const toast = useToastStore()
 
 <template>
   <main class="text-fg relative flex h-screen overflow-hidden">
-    <!-- Global Background Pattern - matches your page pattern exactly -->
+    <!-- Global Background Pattern -->
     <div class="absolute inset-0 z-0">
       <!-- Base theme-aware background -->
       <div

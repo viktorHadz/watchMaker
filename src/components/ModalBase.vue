@@ -1,96 +1,75 @@
-<!-- ModalBase.vue -->
+<script setup>
+defineProps({
+  show: Boolean
+})
+</script>
+
 <template>
-  <teleport to="body">
-    <transition name="modal">
-      <div
-        v-if="isOpen"
-        class="fixed top-0 left-0 z-[99] flex h-full w-full items-center justify-center bg-black/50 transition-all duration-initial sm:items-center"
-        @click.self="close"
-        @keydown.esc="close"
-        tabindex="0"
-        ref="modalRoot"
-      >
-        <div
-          class="bg-primary max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl shadow-xl sm:max-w-lg sm:rounded-xl"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div class="p-4 sm:p-6">
+  <Transition name="modal">
+    <div v-if="show" class="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center bg-black/50 transition-all duration-initial sm:items-center">
+      <div class="bg-primary max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl shadow-xl sm:max-w-lg sm:rounded-xl">
+        <div class="p-4 sm:p-6">
             <header
               v-if="$slots.header"
-              class="bg-primary border-fg/10 sticky top-0 z-10 mb-4 border-b py-3"
+              class=""
             >
               <slot name="header" />
             </header>
 
-            <main class="space-y-4">
-              <slot />
+            <main >
+              <slot name="main"/>
             </main>
 
             <footer
               v-if="$slots.footer"
               class="bg-primary border-fg/10 sticky bottom-0 mt-6 border-t py-3"
             >
-              <slot name="footer" />
+             <slot name="footer">
+              <button
+                class="modal-default-button"
+                @click="$emit('close')"
+              >OK</button>
+            </slot>
             </footer>
           </div>
-        </div>
       </div>
-    </transition>
-  </teleport>
+    </div>
+  </Transition>
 </template>
 
-<script setup>
-import { ref, watch, nextTick } from 'vue'
-
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
-})
-const emit = defineEmits(['update:modelValue'])
-
-const isOpen = ref(props.modelValue)
-
-watch(
-  () => props.modelValue,
-  (val) => {
-    isOpen.value = val
-    if (val) {
-      nextTick(() => {
-        modalRoot.value?.focus()
-      })
-    }
-  },
-)
-
-const modalRoot = ref(null)
-
-function close() {
-  emit('update:modelValue', false)
+<style>
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  transition: opacity 0.3s ease;
 }
-</script>
 
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s ease;
-}
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
 .modal-enter-from {
   opacity: 0;
-  transform: translateY(20px);
 }
-.modal-enter-to {
-  opacity: 1;
-  transform: translateY(0);
-}
-.modal-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
+
 .modal-leave-to {
   opacity: 0;
-  transform: translateY(20px);
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
 }
 </style>

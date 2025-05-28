@@ -13,19 +13,21 @@ export function initializeDatabase() {
   const stmtPostsTable = db.prepare(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER NOT NULL,
+      post_id INTEGER UNIQUE NOT NULL,
       post_title TEXT,
       post_body TEXT,
-      date TEXT)`
+      date TEXT,
+      post_type TEXT)`
   )
   stmtPostsTable.run()
 
   const stmtImagesTable = db.prepare(`
-    CREATE TABLE IF NOT EXISTS post_images (
+    CREATE TABLE IF NOT EXISTS images (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER NOT NULL,
-      image_url TEXT,
-      image_order INTEGER,
+      post_id INTEGER UNIQUE NOT NULL,
+      title_image TEXT,
+      extra_image TEXT,
+      folder_url TEXT,
       FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE)`
   )
   stmtImagesTable.run()

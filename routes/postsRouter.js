@@ -9,9 +9,6 @@ import fs from 'fs'
 const database = db
 const router = express.Router()
 
-// const __filename = fileURLToPath(import.meta.url)
-// const __dirname = path.dirname(__filename)
-
 function getNormalDate() {
   const date = new Date()
   const dd = String(date.getDate()).padStart(2, '0')
@@ -65,8 +62,8 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB per image
-    files: 6 // Maximum 6 files total (1 title + 5 extra)
+    fileSize: 5 * 1024 * 1024,
+    files: 6
   },
   fileFilter: (req, file, cb) => {
     // Accepts only specific image types
@@ -89,6 +86,8 @@ router.post('/new-post', (req, res) => {
     { name: 'titleImage', maxCount: 1 },
     { name: 'extraImages', maxCount: 5 }
   ])
+
+
 
   uploadFields(req, res, (err) => {
     if (err) {
@@ -159,30 +158,22 @@ router.post('/new-post', (req, res) => {
         type,
         folder: req.postFolder
       }
+      console.log('Post to save', post);
 
-      console.log('Post to save:', post)
-      // Gets all post IDs 
-      const stmtPostIds = database.prepare('SELECT post_id FROM posts ORDER BY post_id')
-      const getAllPostIds = database.transaction(() => {
-        stmtPostIds.run()
+      const stmtPostBody = database.prepare(`INSERT INTO posts (post_title, post_body, date, post_type) VALUES(${post.title}, ${post.bodyText}, ${post.date}, ${post.type}))`)
+
+      const stmtPostImages = database.prepare(`INSERT post INTO images (title_image, extra_image, folder_url) (VALUES ${post.titleImage}, ${post.extraImages}, ${post.folder})`)
+      // Insert post
+      database.transaction(() => {
+        database.run(stmtPostBody)
+        database.run(stmtPostImages)
       })
-      getAllPostIds()
-      console.log('Post IDS ', getAllPostIds()); // => undefined - then i need to make a new post number starting from 1
-
-      // to make  a new number you must have the existing number of the latest post 
-      // so one must start with 1 
-      // then procceed to get the post nubmer 
-      // insert it into a binding here and use to insert into posts 
-      // TODO: Save to database
-      // const stmtPost = database.prepare('INSERT INTO posts ')
-      // database.run(stmtPost, ...)
 
       res.json({
         success: true,
         message: 'Post created successfully!',
         post
       })
-
     } catch (error) {
       console.error('Error creating post:', error)
 

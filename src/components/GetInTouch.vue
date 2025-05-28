@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { CurrencyPoundIcon } from '@heroicons/vue/24/outline'
-import ModalBase from '@/components/ModalBase.vue'
+import Modal from '@/components/ModalBase.vue'
 import PriceList from '@/components/PriceList.vue'
 const showModal = ref(false)
 </script>
@@ -97,18 +97,22 @@ const showModal = ref(false)
       </div>
     </div>
     <!-- Modal for Price List -->
-    <ModalBase v-model="showModal">
-      <template #header>
-        <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
-          Service Price List
-        </h2>
-      </template>
-      <PriceList />
-      <template #footer>
-        <div class="text-center">
-          <button @click="showModal = false" class="btn">Close</button>
-        </div>
-      </template>
-    </ModalBase>
+     <Teleport to="body">
+       <Modal :show="showModal">
+         <template #header>
+           <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
+             Service Price List
+           </h2>
+         </template>
+         <template #main>
+           <PriceList/>
+         </template>
+         <template #footer>
+           <div class="text-center">
+             <button @click="showModal = false" class="btn">Close</button>
+           </div>
+         </template>
+       </Modal>
+     </Teleport>
   </div>
 </template>
