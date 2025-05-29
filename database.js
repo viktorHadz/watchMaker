@@ -10,25 +10,22 @@ export function initializeDatabase() {
   db.pragma('busy_timeout = 5000')
   db.pragma('foreign_keys = ON')
   // SCHEMA
-  const stmtPostsTable = db.prepare(`
-    CREATE TABLE IF NOT EXISTS posts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER UNIQUE NOT NULL,
-      post_title TEXT,
-      post_body TEXT,
-      date TEXT,
-      post_type TEXT)`
+  const stmtPostsTable = db.prepare(`CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_title TEXT,
+    post_body TEXT,
+    date TEXT,
+    post_type TEXT)`
   )
   stmtPostsTable.run()
 
-  const stmtImagesTable = db.prepare(`
-    CREATE TABLE IF NOT EXISTS images (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER UNIQUE NOT NULL,
-      title_image TEXT,
-      extra_image TEXT,
-      folder_url TEXT,
-      FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE)`
+  const stmtImagesTable = db.prepare(`CREATE TABLE IF NOT EXISTS images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER NOT NULL,
+    image_path TEXT NOT NULL,
+    image_type TEXT NOT NULL,
+    folder_url TEXT,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE)`
   )
   stmtImagesTable.run()
 }

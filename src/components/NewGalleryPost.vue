@@ -94,7 +94,9 @@ function validatePost() {
   return errors
 }
 
-async function saveNewPost() {
+async function saveNewPost(e) {
+  e.preventDefault()
+  console.log('1. Starting saveNewPost')
   if (isUploading.value) return
 
   // Validate post
@@ -128,11 +130,16 @@ async function saveNewPost() {
     })
 
     const success = await sendNewPost(formData)
-
+    console.log('2. sendNewPost completed, success:', success)
     // Only reset form if upload was successful
     if (success) {
-      resetForm()
-      toast.showToast('Post created successfully!', 'success')
+      console.log('3. About to reset form')
+      // resetForm()
+      console.log('4. Form reset complete')
+
+      console.log('5. About to show toast')
+      // toast.showToast('Post created successfully!', 'success')
+      console.log('6. Toast shown')
     }
   } catch (error) {
     console.error('Error saving post:', error)
@@ -176,8 +183,8 @@ function resetForm() {
   extraFiles.value = []
 
   // Reset file inputs
-  if (titleFileInputRef.value) titleFileInputRef.value.value = ''
-  if (extraFileInputRef.value) extraFileInputRef.value.value = ''
+  if (titleFileInputRef.value) titleFileInputRef.value.value = null
+  if (extraFileInputRef.value) extraFileInputRef.value.value = null
 }
 
 const titleDropZoneRef = ref(null)
@@ -343,7 +350,7 @@ function removeExtraImage(index) {
 
       <!-- CREATE NEW POST SECTION -->
 
-      <form class="mx-auto mb-16 max-w-6xl" enctype="multipart/form-data">
+      <form class="mx-auto mb-16 max-w-6xl" @submit.prevent="saveNewPost">
         <div
           class="overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/90"
         >
@@ -441,6 +448,7 @@ function removeExtraImage(index) {
                           >Featured Image</span
                         >
                         <button
+                          type="button"
                           @click="removeTitleImage"
                           class="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
                         >
@@ -524,6 +532,7 @@ function removeExtraImage(index) {
                             class="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30"
                           >
                             <button
+                              type="button"
                               @click.stop="removeExtraImage(index)"
                               class="h-8 w-8 rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
                             >
@@ -625,7 +634,7 @@ function removeExtraImage(index) {
             <!-- Action Button -->
             <div class="flex justify-center pt-8">
               <button
-                @click.prevent="saveNewPost"
+                type="submit"
                 :disabled="isUploading"
                 class="from-acc to-acc/80 hover:from-acc/90 hover:to-acc/70 focus:ring-acc/50 inline-flex transform items-center rounded-xl bg-gradient-to-r px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] focus:ring-2 focus:outline-none"
                 :class="{ 'cursor-not-allowed opacity-50': isUploading }"
@@ -790,6 +799,7 @@ function removeExtraImage(index) {
             >
               <div class="flex space-x-3">
                 <button
+                  type="button"
                   class="rounded-lg bg-white/20 px-4 py-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

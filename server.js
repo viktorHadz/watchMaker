@@ -12,16 +12,18 @@ app.set('trust proxy', 1)
 app.use(helmet())
 // Body parser
 app.use(express.json())
-// Serve static files (not rate limited) - Should I be adding a rate limit here? 
-app.use('/', express.static('dist'))
+app.use(express.urlencoded({ extended: true }))
+
+// Serve static files (not rate limited) - Should I be adding a rate limit here?
+// app.use('/', express.static('dist'))
 // Registering routes
 app.use('/api/form/', formRouter)
 app.use('/api/posts/', postsRouter)
 
 // GET homepage
-app.get('/', (req, res) => {
-  res.send('mamati')
-})
+// app.get('/', (req, res) => {
+//   res.send('mamati')
+// })
 
 initializeDatabase()
 // Server start

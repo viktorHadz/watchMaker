@@ -97,22 +97,22 @@ const showModal = ref(false)
       </div>
     </div>
     <!-- Modal for Price List -->
-     <Teleport to="body">
-       <Modal :show="showModal">
-         <template #header>
-           <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
-             Service Price List
-           </h2>
-         </template>
-         <template #main>
-           <PriceList/>
-         </template>
-         <template #footer>
-           <div class="text-center">
-             <button @click="showModal = false" class="btn">Close</button>
-           </div>
-         </template>
-       </Modal>
-     </Teleport>
+    <Teleport to="body">
+      <Modal :show="showModal">
+        <template #header>
+          <h2 class="text-fg font-sec text-center text-2xl font-medium tracking-wider">
+            Service Price List
+          </h2>
+        </template>
+        <template #main>
+          <PriceList />
+        </template>
+        <template #footer>
+          <div class="text-center">
+            <button @click="showModal = false" class="btn">Close</button>
+          </div>
+        </template>
+      </Modal>
+    </Teleport>
   </div>
 </template>

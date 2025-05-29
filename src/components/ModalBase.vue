@@ -1,37 +1,36 @@
 <script setup>
 defineProps({
-  show: Boolean
+  show: Boolean,
 })
 </script>
 
 <template>
   <Transition name="modal">
-    <div v-if="show" class="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center bg-black/50 transition-all duration-initial sm:items-center">
-      <div class="bg-primary max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl shadow-xl sm:max-w-lg sm:rounded-xl">
+    <div
+      v-if="show"
+      class="fixed top-0 left-0 z-[1000] flex h-full w-full items-center justify-center bg-black/50 transition-all duration-initial sm:items-center"
+    >
+      <div
+        class="bg-primary max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl shadow-xl sm:max-w-lg sm:rounded-xl"
+      >
         <div class="p-4 sm:p-6">
-            <header
-              v-if="$slots.header"
-              class=""
-            >
-              <slot name="header" />
-            </header>
+          <header v-if="$slots.header" class="">
+            <slot name="header" />
+          </header>
 
-            <main >
-              <slot name="main"/>
-            </main>
+          <main>
+            <slot name="main" />
+          </main>
 
-            <footer
-              v-if="$slots.footer"
-              class="bg-primary border-fg/10 sticky bottom-0 mt-6 border-t py-3"
-            >
-             <slot name="footer">
-              <button
-                class="modal-default-button"
-                @click="$emit('close')"
-              >OK</button>
+          <footer
+            v-if="$slots.footer"
+            class="bg-primary border-fg/10 sticky bottom-0 mt-6 border-t py-3"
+          >
+            <slot name="footer">
+              <button class="modal-default-button" @click="$emit('close')">OK</button>
             </slot>
-            </footer>
-          </div>
+          </footer>
+        </div>
       </div>
     </div>
   </Transition>

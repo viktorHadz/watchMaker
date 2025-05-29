@@ -56,14 +56,14 @@ const storage = multer.diskStorage({
     const timestamp = Date.now()
 
     cb(null, `${prefix}_${timestamp}${ext}`)
-  }
+  },
 })
 
 const upload = multer({
   storage,
   limits: {
     fileSize: 5 * 1024 * 1024,
-    files: 6
+    files: 6,
   },
   fileFilter: (req, file, cb) => {
     // Accepts only specific image types
@@ -74,20 +74,16 @@ const upload = multer({
     } else {
       cb(new Error('Only JPEG, PNG, and WebP images are allowed!'), false)
     }
-  }
+  },
 })
-
-
 
 // Creates new post for route /api/posts/new-post
 router.post('/new-post', (req, res) => {
   // Use multer middleware with custom field validation
   const uploadFields = upload.fields([
     { name: 'titleImage', maxCount: 1 },
-    { name: 'extraImages', maxCount: 5 }
+    { name: 'extraImages', maxCount: 5 },
   ])
-
-
 
   uploadFields(req, res, (err) => {
     if (err) {
@@ -97,25 +93,25 @@ router.post('/new-post', (req, res) => {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          error: 'File too large. Maximum size is 5MB per image.'
+          error: 'File too large. Maximum size is 5MB per image.',
         })
       }
       if (err.code === 'LIMIT_FILE_COUNT') {
         return res.status(400).json({
           success: false,
-          error: 'Too many files. Maximum is 1 title image and 5 extra images.'
+          error: 'Too many files. Maximum is 1 title image and 5 extra images.',
         })
       }
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
         return res.status(400).json({
           success: false,
-          error: 'Unexpected file field.'
+          error: 'Unexpected file field.',
         })
       }
 
       return res.status(400).json({
         success: false,
-        error: err.message || 'File upload failed.'
+        error: err.message || 'File upload failed.',
       })
     }
 
@@ -126,10 +122,13 @@ router.post('/new-post', (req, res) => {
       const { title, bodyText, date, type } = req.body
 
       // Validate required fields
-      if (!title || (!req.files.titleImage && (!req.files.extraImages || req.files.extraImages.length === 0))) {
+      if (
+        !title ||
+        (!req.files.titleImage && (!req.files.extraImages || req.files.extraImages.length === 0))
+      ) {
         return res.status(400).json({
           success: false,
-          error: 'Title and at least one image are required.'
+          error: 'Title and at least one image are required.',
         })
       }
 
@@ -143,11 +142,10 @@ router.post('/new-post', (req, res) => {
       }
 
       if (req.files.extraImages) {
-        extraImagePaths = req.files.extraImages.map(file =>
-          `/uploads/${req.postFolder}/${file.filename}`
+        extraImagePaths = req.files.extraImages.map(
+          (file) => `/uploads/${req.postFolder}/${file.filename}`,
         )
       }
-
       // Create post object
       const post = {
         title,
@@ -156,26 +154,35 @@ router.post('/new-post', (req, res) => {
         extraImages: extraImagePaths,
         date,
         type,
-        folder: req.postFolder
+        folder: req.postFolder,
       }
-      console.log('Post to save', post);
-
-      const stmtPostBody = database.prepare(`INSERT INTO posts (post_title, post_body, date, post_type) VALUES(${post.title}, ${post.bodyText}, ${post.date}, ${post.type}))`)
-
-      const stmtPostImages = database.prepare(`INSERT post INTO images (title_image, extra_image, folder_url) (VALUES ${post.titleImage}, ${post.extraImages}, ${post.folder})`)
-      // Insert post
-      database.transaction(() => {
-        database.run(stmtPostBody)
-        database.run(stmtPostImages)
+      console.log('Post to save', post)
+      // Insert post text
+      const stmtPost = database.prepare(
+        `INSERT INTO posts (post_title, post_body, date, post_type) VALUES (?, ?, ?, ?)`,
+      )
+      const result = stmtPost.run(post.title, post.bodyText, post.date, post.type)
+      // Get the ID latest id and runs result
+      const postId = result.lastInsertRowid
+      // Insert images
+      const insertTitle = db.prepare(
+        `INSERT INTO images (post_id, image_path, image_type, folder_url) VALUES (?, ?, ?, ?)`,
+      )
+      insertTitle.run(postId, post.titleImage, 'title', post.folder)
+      const insertExtra = db.prepare(
+        `INSERT INTO images (post_id, image_path, image_type, folder_url) VALUES (?, ?, ?, ?)`,
+      )
+      post.extraImages.forEach((extraImage) => {
+        insertExtra.run(postId, extraImage, 'extra', post.folder)
       })
 
       res.json({
         success: true,
         message: 'Post created successfully!',
-        post
+        post,
       })
     } catch (error) {
-      console.error('Error creating post:', error)
+      console.error('V-Error creating post:', error)
 
       // Clean up uploaded files on error
       if (req.postFolder) {
@@ -187,7 +194,7 @@ router.post('/new-post', (req, res) => {
 
       res.status(500).json({
         success: false,
-        error: 'Failed to create post'
+        error: 'Failed to create post',
       })
     }
   })
